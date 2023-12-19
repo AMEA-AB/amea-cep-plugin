@@ -11,4 +11,5 @@ declare global {
     cep: cep;
     __adobe_cep__: __adobe_cep__;
   }
+  const __VERSION__: string;
 }

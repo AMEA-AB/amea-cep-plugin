@@ -5,7 +5,7 @@ import { version } from "./package.json";
 const config: CEP_Config = {
   version,
   id: "com.amea.cep",
-  displayName: "Amea AB - Test 2",
+  displayName: "Amea AB",
   symlink: "local",
   port: 3000,
   servePort: 5000,
@@ -26,9 +26,9 @@ const config: CEP_Config = {
 
   panels: [
     {
-      mainPath: "./main/index.html",
-      name: "main",
-      panelDisplayName: "Main",
+      mainPath: "./app/index.html",
+      name: "app",
+      panelDisplayName: "AMEA AB",
       autoVisible: true,
       width: 600,
       height: 650,

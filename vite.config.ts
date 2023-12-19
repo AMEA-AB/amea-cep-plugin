@@ -52,6 +52,9 @@ export default defineConfig({
   resolve: {
     alias: [{ find: "@esTypes", replacement: path.resolve(__dirname, "src") }],
   },
+  define: {
+    __VERSION__: JSON.stringify(require("./package.json").version),
+  },
   root,
   clearScreen: false,
   server: {
