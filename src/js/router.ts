@@ -18,14 +18,15 @@ const router = createRouter({
                 {
                     path: "",
                     name: "home",
-                    component: Home,
+                    component: Home
                 },
                 {
                     path: "/generate",
                     name: "generate",
                     component: Generate,
                     meta: {
-                        showInMenu: true
+                        showInMenu: true,
+                        navBack: "/app/"
                     }
                 },
                 {
@@ -33,7 +34,8 @@ const router = createRouter({
                     name: "jig",
                     component: Jig,
                     meta: {
-                        showInMenu: true
+                        showInMenu: true,
+                        navBack: "/app/"
                     }
                 }
             ]

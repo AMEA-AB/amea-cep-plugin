@@ -17,5 +17,6 @@ declare global {
 declare module 'vue-router' {
   interface RouteMeta {
     showInMenu?: boolean;
+    navBack?: RouteLocationRaw;
   }
 }

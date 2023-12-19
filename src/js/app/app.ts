@@ -4,6 +4,7 @@ import { initBolt } from "../lib/utils/bolt";
 import router from "../router";
 
 import "bootstrap/scss/bootstrap.scss";
+import 'bootstrap-icons/font/bootstrap-icons.scss';
 
 initBolt();
 const app = createApp(App);
