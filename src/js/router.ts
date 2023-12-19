@@ -24,11 +24,17 @@ const router = createRouter({
                     path: "/generate",
                     name: "generate",
                     component: Generate,
+                    meta: {
+                        showInMenu: true
+                    }
                 },
                 {
                     path: "/jig",
                     name: "jig",
-                    component: Jig
+                    component: Jig,
+                    meta: {
+                        showInMenu: true
+                    }
                 }
             ]
         }

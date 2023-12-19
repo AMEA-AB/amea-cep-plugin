@@ -30,8 +30,10 @@ const config: CEP_Config = {
       name: "app",
       panelDisplayName: "AMEA AB",
       autoVisible: true,
-      width: 600,
-      height: 650,
+      width: 400,
+      height: 600,
+      minWidth: 200,
+      minHeight: 300,
     }
   ],
   build: {

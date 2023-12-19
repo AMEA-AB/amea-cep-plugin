@@ -13,3 +13,9 @@ declare global {
   }
   const __VERSION__: string;
 }
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    showInMenu?: boolean;
+  }
+}
