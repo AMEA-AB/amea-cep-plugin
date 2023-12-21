@@ -1,0 +1,77 @@
+import downloadFile from "../helpers/downloadFile";
+import currentTimestamp from "../helpers/currentTimestamp";
+import createUniqueFile from "../helpers/createUniqueFile";
+import populateLayer from "../helpers/populateLayer";
+import saveDocument from "../helpers/saveDocument";
+import type { RowData } from "../helpers/populateLayer";
+
+function getTemplateFile(templateName: string) {
+    const url = "http://cdn.ameaab.se/illustrator-templates/" + encodeURIComponent(templateName);
+    return downloadFile(url);
+}
+
+function generateFilename(rowData: RowData, layerName?: string) {
+    const replaceAllInString = function (input: string, search: string, replace: string) {
+        return input.split(search).join(replace);
+    }
+    const order_number = replaceAllInString(rowData['Order number'], '#', '');
+    const filename = order_number + (layerName ? " " + layerName : "") + "." + rowData["Ouput type"];
+    return filename;
+}
+
+function createOutputFile(rowData: RowData, layerName?: string) {
+    const jig = rowData["Jig"].split('.')[0];
+    const timestamp = currentTimestamp('YYYY-MM-DD');
+    const outputFolder = new Folder(Folder.desktop + '/Output/' + timestamp + (jig ? '/' + jig : ''));
+    if (!outputFolder.exists) {
+        outputFolder.create();
+    }
+    const filename = generateFilename(rowData, layerName);
+    const outputFile = createUniqueFile(outputFolder, filename);
+    return outputFile;
+}
+
+function handleLayer(doc: Document, layerIndex: number, rowData: RowData) {
+    const layer = doc.layers[layerIndex];
+    const layerName = doc.layers.length > 1 ? layer.name : undefined;
+
+    // Remove all layers except the current one from the copy
+    for (var j = 0; j < doc.layers.length; j++) {
+        if (doc.layers[j] !== layer) {
+            doc.layers[j].remove();
+        }
+    }
+    populateLayer(layer, rowData);
+    try {
+        const outputFile = createOutputFile(rowData, layerName);
+        saveDocument(doc, outputFile);
+    } catch (e) {
+        throw new Error("Could not save document");
+    }
+}
+
+export default function generateFromExcel(rowData: RowData) {
+    const templateName = rowData["Template"];
+    if (!templateName) {
+        throw new Error("No template specified");
+    }
+    const templateFile = getTemplateFile(templateName);
+    var doc = app.open(templateFile);
+    const numLayers = doc.layers.length;
+    if (numLayers === 1) {
+        handleLayer(doc, 0, rowData)
+        doc.close(SaveOptions.DONOTSAVECHANGES);
+    }
+    else if (numLayers > 1) {
+        doc.close(SaveOptions.DONOTSAVECHANGES);
+        for (var i = 0; i < numLayers; i++) {
+            doc = app.open(templateFile);
+            handleLayer(doc, i, rowData)
+            doc.close(SaveOptions.DONOTSAVECHANGES);
+        }
+    }
+    else {
+        throw new Error("Could not find any layers in the template");
+    }
+
+}

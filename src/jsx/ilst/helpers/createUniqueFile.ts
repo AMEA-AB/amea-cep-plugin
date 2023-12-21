@@ -1,4 +1,4 @@
-export function createUniqueFile(folder: Folder, filename: string) {
+export default function createUniqueFile(folder: Folder, filename: string) {
     const baseFilename = filename.split(".").shift();
     const extension = filename.split(".").pop();
     var outputFile = new File(folder + "/" + filename);

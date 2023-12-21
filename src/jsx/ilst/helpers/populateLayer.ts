@@ -3,7 +3,7 @@ import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 
-interface RowData {
+export interface RowData {
     "Ouput type": string;
     "Jig": string;
     "Template": string;
@@ -128,6 +128,6 @@ const handleGroup = (group: GroupItem, data: RowData) => {
     handleTextFrames(textFrames, data);
 }
 
-export default function populateLayer(layer: RowData, data: RowData) {
+export default function populateLayer(layer: Layer, data: RowData) {
     handleGroup(layer as unknown as GroupItem, data);
 }

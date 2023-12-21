@@ -1,4 +1,4 @@
-export default function downloadFile(url: string) {
+export default function downloadFile(url: string): File {
     const filenameRegex = /.*\/(.*)/g;
     const filename = filenameRegex.exec(url)![1];
     const file = new File(Folder.temp + "/" + filename);
@@ -6,6 +6,7 @@ export default function downloadFile(url: string) {
         file.remove();
     }
     JSXGetURL().get(url, file.fsName);
+    
     if (!file.exists) {
         throw new Error("Could not download file " + url);
     }
