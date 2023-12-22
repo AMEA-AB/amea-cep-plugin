@@ -1,24 +1,9 @@
 const Koa = require('koa') as typeof import('koa');
-const Router = require('@koa/router') as typeof import('@koa/router');
 
-import downloadFile from './helpers/downloadFile';
+import createUniqueFileRouter from './endpoints/createUniqueFile';
+import downloadFileRouter from './endpoints/downloadFile';
 
 const app = new Koa();
-const router = new Router();
-
-router.get('/download-file', async (ctx) => {
-  const url = ctx.query.url;
-  if (!url) {
-    ctx.throw(400, 'url required');
-    return;
-  }
-  if(typeof url !== 'string') {
-    ctx.throw(400, 'url must be a string');
-    return;
-  }
-  const path = await downloadFile(url);
-  ctx.body = path
-});
 
 app.use(async (ctx, next) => {
   try {
@@ -31,6 +16,8 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(router.routes()).use(router.allowedMethods());
+app
+  .use(createUniqueFileRouter.routes())
+  .use(downloadFileRouter.routes());
 
 app.listen(3001);
