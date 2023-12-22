@@ -34,6 +34,13 @@ const config: CEP_Config = {
       height: 600,
       minWidth: 200,
       minHeight: 300,
+    },
+    {
+      mainPath: "./server/index.html",
+      name: "server",
+      autoVisible: false,
+      type: "Custom",
+      startOnEvents: ["applicationActivate"]
     }
   ],
   build: {
@@ -49,7 +56,7 @@ const config: CEP_Config = {
     sourceMap: false,
     jsxBin: "off",
   },
-  installModules: [],
+  installModules: ["koa", "@koa/router"],
   copyAssets: ["jsx/lib/JSXGetURL"],
   copyZipAssets: [],
 };
