@@ -1,10 +1,9 @@
 const Koa = require('koa') as typeof import('koa');
+const Router = require('@koa/router') as typeof import('@koa/router');
 const cors = require('@koa/cors') as typeof import('@koa/cors');
 
-import fileRoutes from './routes/file-routes';
-import githubRoutes from './routes/github-routes';
-
 const app = new Koa();
+const router = new Router();
 
 app.use(cors());
 
@@ -19,8 +18,11 @@ app.use(async (ctx, next) => {
   }
 });
 
-app
-  .use(fileRoutes.routes())
-  .use(githubRoutes.routes());
+
+router.get('/ping', (ctx) => {
+  ctx.body = 'pong';
+});
+
+app.use(router.routes());
 
 app.listen(3001);
