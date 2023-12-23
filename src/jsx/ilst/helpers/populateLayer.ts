@@ -1,4 +1,3 @@
-import downloadFile from "./downloadFile";
 import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
@@ -61,7 +60,7 @@ const getFillColorOfGroup = (groupItem: GroupItem) => {
 
 const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     if (typeof file === 'string') {
-        file = downloadFile(file);
+        file = File(file);
     }
     const doc = app.open(file);
     const fillColor = getFillColorOfGroup(groupItem)!;
@@ -96,10 +95,7 @@ const handleRasterItems = (rasterItems: RasterItem[], data: RowData) => {
     for (var i = 0; i < length; i++) {
         var rasterItem = rasterItems[i];
         if (shouldEdit(rasterItem, data)) {
-            var file: File | string = data[rasterItem.name];
-            if (typeof file === 'string') {
-                file = downloadFile(file);
-            }
+            var file = File(data[rasterItem.name]);
             var placedItem = placeItem(rasterItem, file);
             embedImage(placedItem);
             rasterItem.remove();

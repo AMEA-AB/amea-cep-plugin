@@ -21,4 +21,15 @@ export default new class FileService {
             });
         });
     }
+
+    downloadFiles(urls: string[]): Promise<{ [url: string]: string }> {
+        return Promise.all(urls.map(url => this.downloadFile(url))).then(filePaths => {
+            const urlToFilePaths: { [url: string]: string } = {};
+            urls.forEach((url, index) => {
+                urlToFilePaths[url] = filePaths[index];
+            });
+            return urlToFilePaths;
+        });
+        
+    }
 }

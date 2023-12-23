@@ -1,14 +1,8 @@
-import downloadFile from "../helpers/downloadFile";
 import currentTimestamp from "../helpers/currentTimestamp";
 import createUniqueFile from "../helpers/createUniqueFile";
 import populateLayer from "../helpers/populateLayer";
 import saveDocument from "../helpers/saveDocument";
 import type { RowData } from "../helpers/populateLayer";
-
-function getTemplateFile(templateName: string) {
-    const url = "http://cdn.ameaab.se/illustrator-templates/" + encodeURIComponent(templateName);
-    return downloadFile(url);
-}
 
 function generateFilename(rowData: RowData, layerName?: string) {
     const replaceAllInString = function (input: string, search: string, replace: string) {
@@ -51,11 +45,11 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData) {
 }
 
 export default function generateFromExcel(rowData: RowData) {
-    const templateName = rowData["Template"];
-    if (!templateName) {
-        throw new Error("No template specified");
+    const templateFile = File(rowData["Template"]);
+    if(!templateFile.exists) {
+        Window.alert("Template file " + templateFile.name + " does not exist");
+        return;
     }
-    const templateFile = getTemplateFile(templateName);
     var doc = app.open(templateFile);
     const numLayers = doc.layers.length;
     if (numLayers === 1) {
