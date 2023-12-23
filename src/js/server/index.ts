@@ -1,8 +1,8 @@
 const Koa = require('koa') as typeof import('koa');
 const cors = require('@koa/cors') as typeof import('@koa/cors');
 
-import createUniqueFileRouter from './endpoints/createUniqueFile';
-import downloadFileRouter from './endpoints/downloadFile';
+import fileRoutes from './routes/file-routes';
+import githubRoutes from './routes/github-routes';
 
 const app = new Koa();
 
@@ -20,7 +20,7 @@ app.use(async (ctx, next) => {
 });
 
 app
-  .use(createUniqueFileRouter.routes())
-  .use(downloadFileRouter.routes());
+  .use(fileRoutes.routes())
+  .use(githubRoutes.routes());
 
 app.listen(3001);

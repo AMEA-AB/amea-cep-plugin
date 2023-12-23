@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import dotenv from 'dotenv';
 
 import { cep, runAction } from "vite-cep-plugin";
 import cepConfig from "./cep.config";
@@ -46,6 +47,8 @@ if (action) {
   process.exit();
 }
 
+dotenv.config({ path: 'secrets.env' });
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), cep(config)],
@@ -54,6 +57,10 @@ export default defineConfig({
   },
   define: {
     __VERSION__: JSON.stringify(require("./package.json").version),
+    'process.env.GITHUB_OWNER': JSON.stringify(process.env.GITHUB_OWNER),
+    'process.env.GITHUB_REPO': JSON.stringify(process.env.GITHUB_REPO),
+    'process.env.GITHUB_BRANCH': JSON.stringify(process.env.GITHUB_BRANCH),
+    'process.env.GITHUB_TOKEN': JSON.stringify(process.env.GITHUB_TOKEN)
   },
   root,
   clearScreen: false,
