@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import GithubService from '../services/github-service';
+import FileInputMultiple from '../components/FileInputMultiple.vue';
 import { evalTS } from '../lib/utils/bolt';
 
 const jigs = ref<string[]>([]);
@@ -10,10 +11,6 @@ const selectedFiles = ref<string[]>([]);
 onMounted(async () => {
     jigs.value = await GithubService.getFileNamesInFolder('jigs');
 });
-
-const onSelectFiles = async () => {
-    selectedFiles.value = await evalTS('openFileDialogMultiple', "");
-}
 
 const populateJig = async () => {
     if (selectedJig.value && selectedFiles.value.length > 0) {
@@ -36,11 +33,7 @@ const populateJig = async () => {
                 <option v-for="filename in jigs" :key="filename" :value="filename">{{ filename }}</option>
             </select>
         </div>
-        <div class="mb-3">
-            <button @click="onSelectFiles" class="btn btn-secondary">
-                <span>{{ selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'Select Files' }}</span>
-            </button>
-        </div>
+        <FileInputMultiple v-model="selectedFiles" title="Select files" multiple :filetypes="['pdf', 'ai']"></FileInputMultiple>
         <div class="mb-3">
             <button @click="populateJig" v-bind:disabled="!(selectedJig && selectedFiles.length > 0)"
                 class="btn btn-primary">Process</button>
