@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import { evalTS } from '../lib/utils/bolt';
 
 const props = defineProps({
