@@ -43,7 +43,13 @@ export const extendscriptConfig = (
           "@babel/plugin-proposal-class-properties",
         ],
       }),
-      jsxPonyfill(),
+      jsxPonyfill([
+        {
+          find: "Array.includes",
+          replace: "__includes",
+          inject: "function __includes(array, value) { for (var index = 0, length = array.length; index < length; index++) { if (array[index] === value) { return true; } } return false; }"
+        }
+      ]),
       jsxInclude({
         iife: true,
         globalThis: GLOBAL_THIS,

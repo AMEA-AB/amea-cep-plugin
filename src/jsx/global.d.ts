@@ -10,6 +10,7 @@ interface ObjectConstructor {
 
 interface ArrayConstructor {
   isArray<T>(arg: any): arg is Array<T>;
+  includes<T>(array: T[], value: T): boolean;
 }
 
 declare function JSXGetURL(): {
