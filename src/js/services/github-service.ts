@@ -1,6 +1,6 @@
 import { os, fs, path as _path, https } from '../lib/cep/node';
 
-interface GithubFile {
+export interface GithubFile {
     name: string;
     path: string;
     sha: string;
@@ -42,7 +42,7 @@ export default new class GithubService {
         }
     }
 
-    public getFileNamesInFolder(path: string, extension?: string[]): Promise<string[]> {
+    public getFileNamesInFolder(path: string, extension?: string[]): Promise<GithubFile[]> {
         return new Promise((resolve, reject) => {
             const urlPath = `/repos/${this.githubOwner}/${this.githubRepo}/contents/${path}?ref=${this.githubBranch}`;
 
@@ -62,10 +62,9 @@ export default new class GithubService {
 
                 res.on('end', () => {
                     const response = JSON.parse(data) as GithubFile[];
-                    const fileNames = response
-                        .filter((content: any) => content.type === 'file' && (!extension || content.name.endsWith(`.${extension}`)))
-                        .map((content: any) => content.name);
-                    resolve(fileNames);
+                    const files = response
+                        .filter((content: any) => content.type === 'file' && (!extension || content.name.endsWith(`.${extension}`)));
+                    resolve(files);
                 });
             });
 
@@ -77,19 +76,23 @@ export default new class GithubService {
         });
     }
 
-    public downloadFile(path: string): Promise<string> {
+    public downloadFileFromRepo(path: string, filename?: string): Promise<string> {
+        const urlPath = `/${this.githubOwner}/${this.githubRepo}/${this.githubBranch}/${path}`;
+        return this.downloadFile(urlPath, filename);
+    }
+
+    public downloadFile(url: string, filename?: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            const urlPath = `/${this.githubOwner}/${this.githubRepo}/${this.githubBranch}/${path}`;
 
             const tempDir = os.tmpdir();
-            const filePath = _path.join(tempDir, _path.basename(path));
+            const filePath = _path.join(tempDir, filename ?? _path.basename(url));
 
             const fileStream = fs.createWriteStream(filePath);
 
             const options = {
                 'method': 'GET',
                 'hostname': 'raw.githubusercontent.com',
-                'path': urlPath,
+                'path': url,
                 'headers': this.githubHeaders,
                 'maxRedirects': 20
             };
