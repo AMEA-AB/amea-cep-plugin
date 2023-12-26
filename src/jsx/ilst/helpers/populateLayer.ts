@@ -2,6 +2,8 @@ import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 
+type LayerGroupOverlap = GroupItem | Layer;
+
 const shouldEdit = (item: PageItem, data: Record<string, string>) => {
     if (item.locked || item.hidden) {
         return false;
@@ -28,7 +30,7 @@ const setFillColorOfPathItems = (pathItems: PathItem[], color: Color) => {
     }
 }
 
-const setFillColorOfGroupItem = (groupItem: GroupItem, color: Color) => {
+const setFillColorOfGroupItem = (groupItem: LayerGroupOverlap, color: Color) => {
     if (groupItem.pathItems.length > 0) {
         setFillColorOfPathItems(groupItem.pathItems, color);
     }
@@ -40,7 +42,7 @@ const setFillColorOfGroupItem = (groupItem: GroupItem, color: Color) => {
     }
 }
 
-const getFillColorOfGroup = (groupItem: GroupItem) => {
+const getFillColorOfGroup = (groupItem: LayerGroupOverlap) => {
     if (groupItem.pathItems.length > 0) {
         return groupItem.pathItems[0].fillColor;
     } else if (groupItem.compoundPathItems.length > 0) {
@@ -55,7 +57,7 @@ const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     }
     const doc = app.open(file);
     const fillColor = getFillColorOfGroup(groupItem)!;
-    setFillColorOfGroupItem(doc.layers[0] as unknown as GroupItem, fillColor);
+    setFillColorOfGroupItem(doc.layers[0], fillColor);
     const filename = file.name.split(".").shift();
     const pdfFile = new File(Folder.temp + '/' + filename + '.pdf');
     saveDocument(doc, pdfFile);
@@ -106,7 +108,7 @@ const handleTextFrames = (textFrames: TextFrame[], data: Record<string, string>)
     }
 }
 
-const handleGroup = (group: GroupItem, data: Record<string, string>) => {
+const handleGroup = (group: LayerGroupOverlap, data: Record<string, string>) => {
     const groupItems = group.groupItems;
     handleGroupItems(groupItems, data);
     const rasterItems = group.rasterItems;
@@ -115,6 +117,6 @@ const handleGroup = (group: GroupItem, data: Record<string, string>) => {
     handleTextFrames(textFrames, data);
 }
 
-export default function populateLayer(layer: Layer, data: Record<string, string>) {
-    handleGroup(layer as unknown as GroupItem, data);
+export default function populateLayer(layer: LayerGroupOverlap, data: Record<string, string>) {
+    handleGroup(layer, data);
 }
