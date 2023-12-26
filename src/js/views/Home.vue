@@ -13,8 +13,10 @@ const menuTitle = (route: RouteRecordRaw) => {
   if(!route.name) {
     return route.path;
   }
-  const routeName = route.name.toString();
-  return routeName.charAt(0).toUpperCase() + routeName.slice(1);
+  let routeName = route.name.toString();
+  routeName = routeName.replaceAll('-', ' ');
+  routeName = routeName.charAt(0).toUpperCase() + routeName.slice(1);
+  return routeName;
 }
 </script>
 

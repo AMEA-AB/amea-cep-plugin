@@ -3,6 +3,13 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const version = __VERSION__;
+
+const routeTitle = () => {
+  let routeName = router.currentRoute.value.name?.toString() ?? '';
+  routeName = routeName.replaceAll('-', ' ');
+  routeName = routeName.charAt(0).toUpperCase() + routeName.slice(1);
+  return routeName;
+}
 </script>
 
 <template>
@@ -12,7 +19,7 @@ const version = __VERSION__;
         class="btn back-button position-absolute start-0">
         <i class="bi-arrow-left-circle"></i>
       </button>
-      <h1 v-if="!!$route.meta.showInMenu">{{ $route.name }}</h1>
+      <h1 v-if="!!$route.meta.showInMenu">{{ routeTitle() }}</h1>
     </div>
     <router-view />
   </div>
