@@ -2,6 +2,13 @@ import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 
+
+declare global {
+    const enum ElementPlacement {
+        PLACEBEFORE = 'placeBefore',
+    }
+}
+
 type LayerGroupOverlap = GroupItem | Layer;
 
 const shouldEdit = (item: PageItem, data: Record<string, string>) => {
@@ -16,11 +23,14 @@ const shouldEdit = (item: PageItem, data: Record<string, string>) => {
 }
 
 const placeItem = (item: PageItem, file: File) => {
-    const placedItem = item.layer.placedItems.add();
+    const parent = item.parent as GroupItem | Layer;
+    const placedItem = parent.placedItems.add();
     placedItem.file = file;
     placedItem.position = item.position;
     placedItem.width = item.width;
     placedItem.height = item.height;
+    placedItem.move(item, ElementPlacement.PLACEBEFORE);
+    item.remove();
     return placedItem;
 }
 
@@ -66,7 +76,6 @@ const replaceSVG = (groupItem: GroupItem, file: File | string) => {
 
     const embeddedItem = embedImage<GroupItem>(placedItem);
     cropClipGroup(embeddedItem);
-    groupItem.remove();
 }
 
 const handleGroupItems = (groupItems: GroupItem[], data: Record<string, string>) => {
@@ -91,7 +100,6 @@ const handleRasterItems = (rasterItems: RasterItem[], data: Record<string, strin
             var file = File(data[rasterItem.name]);
             var placedItem = placeItem(rasterItem, file);
             embedImage(placedItem);
-            rasterItem.remove();
         }
     }
 }
