@@ -23,7 +23,6 @@ const populateJig = async () => {
 
 <template>
     <div>
-        <h1 style="color: red">Jig</h1>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="jigSelect">Jig</label>

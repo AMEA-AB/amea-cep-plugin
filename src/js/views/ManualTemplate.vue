@@ -55,7 +55,6 @@ const populateTemplate = async () => {
 
 <template>
     <div>
-        <h1 style="color: red">Manual Populate template</h1>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="templateSelect">Template</label>
