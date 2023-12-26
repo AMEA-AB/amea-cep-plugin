@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import * as XLSX from 'xlsx';
 import FileService from '../services/file-service';
-import type { RowData } from '../../jsx/ilst/helpers/populateLayer';
+import type { RowData } from '../../jsx/ilst/functions/generateFromExcel';
 import { evalTS } from '../lib/utils/bolt';
 
 const rowData = ref<RowData[] | undefined>(undefined)

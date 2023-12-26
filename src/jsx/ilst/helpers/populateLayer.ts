@@ -2,16 +2,7 @@ import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 
-export interface RowData {
-    "Ouput type": string;
-    "Jig": string;
-    "Template": string;
-    "Order number": string;
-    "Product": string;
-    [key: string]: string;
-}
-
-const shouldEdit = (item: PageItem, data: RowData) => {
+const shouldEdit = (item: PageItem, data: Record<string, string>) => {
     if (item.locked || item.hidden) {
         return false;
     }
@@ -76,7 +67,7 @@ const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     groupItem.remove();
 }
 
-const handleGroupItems = (groupItems: GroupItem[], data: RowData) => {
+const handleGroupItems = (groupItems: GroupItem[], data: Record<string, string>) => {
     const length = groupItems.length;
     for (var i = 0; i < length; i++) {
         var groupItem = groupItems[i];
@@ -90,7 +81,7 @@ const handleGroupItems = (groupItems: GroupItem[], data: RowData) => {
     }
 }
 
-const handleRasterItems = (rasterItems: RasterItem[], data: RowData) => {
+const handleRasterItems = (rasterItems: RasterItem[], data: Record<string, string>) => {
     const length = rasterItems.length;
     for (var i = 0; i < length; i++) {
         var rasterItem = rasterItems[i];
@@ -103,7 +94,7 @@ const handleRasterItems = (rasterItems: RasterItem[], data: RowData) => {
     }
 }
 
-const handleTextFrames = (textFrames: TextFrame[], data: RowData) => {
+const handleTextFrames = (textFrames: TextFrame[], data: Record<string, string>) => {
     for (var i = 0; i < textFrames.length; i++) {
         var textFrame = textFrames[i];
         if (shouldEdit(textFrame, data)) {
@@ -115,7 +106,7 @@ const handleTextFrames = (textFrames: TextFrame[], data: RowData) => {
     }
 }
 
-const handleGroup = (group: GroupItem, data: RowData) => {
+const handleGroup = (group: GroupItem, data: Record<string, string>) => {
     const groupItems = group.groupItems;
     handleGroupItems(groupItems, data);
     const rasterItems = group.rasterItems;
@@ -124,6 +115,6 @@ const handleGroup = (group: GroupItem, data: RowData) => {
     handleTextFrames(textFrames, data);
 }
 
-export default function populateLayer(layer: Layer, data: RowData) {
+export default function populateLayer(layer: Layer, data: Record<string, string>) {
     handleGroup(layer as unknown as GroupItem, data);
 }

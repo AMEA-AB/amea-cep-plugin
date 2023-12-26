@@ -2,7 +2,15 @@ import currentTimestamp from "../helpers/currentTimestamp";
 import createUniqueFile from "../helpers/createUniqueFile";
 import populateLayer from "../helpers/populateLayer";
 import saveDocument from "../helpers/saveDocument";
-import type { RowData } from "../helpers/populateLayer";
+
+export interface RowData {
+    "Ouput type": string;
+    "Jig": string;
+    "Template": string;
+    "Order number": string;
+    "Product": string;
+    [key: string]: string;
+}
 
 function generateFilename(rowData: RowData, layerName?: string) {
     const replaceAllInString = function (input: string, search: string, replace: string) {

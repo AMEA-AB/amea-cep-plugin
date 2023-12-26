@@ -5,6 +5,7 @@ import Panel from "./layouts/Panel.vue";
 import Home from "./views/Home.vue";
 import Generate from "./views/Generate.vue";
 import Jig from "./views/Jig.vue";
+import ManualTemplate from "./views/ManualTemplate.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,15 @@ const router = createRouter({
                     path: "/jig",
                     name: "jig",
                     component: Jig,
+                    meta: {
+                        showInMenu: true,
+                        navBack: "/app/"
+                    }
+                },
+                {
+                    path: "/manual-template",
+                    name: "manual-template",
+                    component: ManualTemplate,
                     meta: {
                         showInMenu: true,
                         navBack: "/app/"
