@@ -57,7 +57,7 @@ const config: CEP_Config = {
     jsxBin: "off",
   },
   installModules: ["koa", "@koa/router", "@koa/cors"],
-  copyAssets: ["jsx/lib/JSXGetURL"],
+  copyAssets: [],
   copyZipAssets: [],
 };
 export default config;

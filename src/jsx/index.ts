@@ -1,5 +1,4 @@
 // @include './lib/json2.js'
-// @include './lib/JSXGetURLLoader.js'
 
 import { ns } from "../shared/shared";
 
