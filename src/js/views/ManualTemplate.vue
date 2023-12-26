@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, watch} from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router';
-import GithubService, {GithubFile} from '../services/github-service';
+import GithubService, { GithubFile } from '../services/github-service';
 import FileInputSingle from '../components/FileInputSingle.vue';
+import FolderInput from '../components/FolderInput.vue';
 import { evalTS } from '../lib/utils/bolt';
 
 const templates = ref<GithubFile[]>([]);
 const selectedTemplate = ref<GithubFile | undefined>(undefined);
+const outputName = ref<string | undefined>(undefined);
+const outputType = ref<string>('pdf');
+const outputFolder = ref<string | undefined>(undefined);
 const editableItems = ref<Record<string, string> | undefined>(undefined);
 const templateData = ref<Record<string, string>>({});
 
@@ -18,10 +22,10 @@ onMounted(() => {
     watch(selectedTemplate, async (newValue, oldValue) => {
         editableItems.value = undefined;
         templateData.value = {};
-        if(oldValue) {
+        if (oldValue) {
             await evalTS('closeDocumentByName', oldValue.name);
         }
-        if(!newValue) return;
+        if (!newValue) return;
         const templateFile = await GithubService.downloadFile(newValue.download_url, newValue.name);
         await evalTS('openDocument', templateFile);
         editableItems.value = await evalTS('getEditableItems', ['RasterItem', 'GroupItem', "TextFrame"]);
@@ -29,21 +33,28 @@ onMounted(() => {
 });
 
 onBeforeRouteLeave(() => {
-    if(selectedTemplate.value) {
+    if (selectedTemplate.value) {
         evalTS('closeDocumentByName', selectedTemplate.value.name);
     }
 });
 
 const populateTemplate = async () => {
+    const outputFile = `${outputFolder.value}/${outputName.value}.${outputType.value}`
     evalTS('populateDocument', templateData.value);
+    evalTS('saveDocument', outputFile);
+    if(!selectedTemplate.value) return;
+
+    // Reset UI
+    evalTS('closeDocumentByName', selectedTemplate.value.name);
+    selectedTemplate.value = undefined;
+    outputName.value = undefined;
+    editableItems.value = undefined;
+    templateData.value = {};
 }
 </script>
 
 <template>
     <div>
-        <pre>
-            {{ templateData }}
-        </pre>
         <h1 style="color: red">Manual Populate template</h1>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -54,27 +65,36 @@ const populateTemplate = async () => {
                 <option v-for="files in templates" :key="files.name" :value="files">{{ files.name }}</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label for="outputName">Output name</label>
+            <input id="outputName" v-model="outputName" type="text" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="templateSelect">Output type</label>
+            </div>
+            <select v-model="outputType" class="form-select" id="templateSelect">
+                <option v-for="outputType in ['pdf', 'ai', 'svg']" :key="outputType" :value="outputType">{{ outputType }}
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="outputFolder">Output folder</label>
+            <FolderInput id="outputFolder" v-model="outputFolder" title="Select output folder"></FolderInput>
+        </div>
         <div v-if="editableItems">
-            <div v-for="(type, title) in editableItems" :key="title">
+            <div v-for="(type, title) in editableItems" :key="title" class="mb-3">
                 <label :for="title">{{ title }}</label>
-                <FileInputSingle
-                    v-if="type === 'RasterItem' || type === 'GroupItem'"
-                    v-model="templateData[title]"
-                    :title="`Select file for ${title}`"
-                    :filetypes="type === 'RasterItem' ? ['png', 'jpg'] : ['svg', 'ai']"
-                ></FileInputSingle>
-                <input
-                    v-if="type === 'TextFrame'"
-                    v-model="templateData[title]"
-                    :title="`Enter text for ${title}`"
-                    type="text"
-                    class="form-control"
-                    :id="title"
-                >
+                <FileInputSingle v-if="type === 'RasterItem' || type === 'GroupItem'" v-model="templateData[title]"
+                    :title="`Select file for ${title}`" :filetypes="type === 'RasterItem' ? ['png', 'jpg'] : ['svg', 'ai']">
+                </FileInputSingle>
+                <input v-if="type === 'TextFrame'" v-model="templateData[title]" type="text" class="form-control"
+                    :id="title">
             </div>
         </div>
         <div class="mb-3">
-            <button @click="populateTemplate" class="btn btn-primary">Process</button>
+            <button @click="populateTemplate" class="btn btn-primary"
+                v-bind:disabled="!selectedTemplate || !outputName || !outputFolder || !editableItems">Process</button>
         </div>
     </div>
 </template>
