@@ -1,6 +1,7 @@
 import cropClipGroup from "./cropClipGroup";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
+import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
 
 
 declare global {
@@ -109,6 +110,9 @@ const handleTextFrames = (textFrames: TextFrame[], data: Record<string, string>)
         var textFrame = textFrames[i];
         if (shouldEdit(textFrame, data)) {
             textFrame.contents = data[textFrame.name];
+            if(textFrame.kind === TextType.AREATEXT) {
+                fitTextToFrameIfOverflowing(textFrame);
+            }
             var groupItem = textFrame.createOutline();
             groupItem.locked = true;
             i--; // Textframe is now a group item
