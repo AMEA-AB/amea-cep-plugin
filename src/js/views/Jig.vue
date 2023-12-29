@@ -14,7 +14,7 @@ onMounted(async () => {
 
 const populateJig = async () => {
     if (selectedJig.value && selectedFiles.value.length > 0) {
-        const jigPath = await GithubService.downloadFile(selectedJig.value.download_url);
+        const jigPath = await GithubService.downloadGithubFile(selectedJig.value);
         await evalTS('populateJig', jigPath, selectedFiles.value);
         selectedFiles.value = [];
     }

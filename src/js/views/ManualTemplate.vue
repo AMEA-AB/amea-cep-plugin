@@ -26,7 +26,7 @@ onMounted(() => {
             await evalTS('closeDocumentByName', oldValue.name);
         }
         if (!newValue) return;
-        const templateFile = await GithubService.downloadFile(newValue.download_url, newValue.name);
+        const templateFile = await GithubService.downloadGithubFile(newValue);
         await evalTS('openDocument', templateFile);
         editableItems.value = await evalTS('getEditableItems', ['RasterItem', 'GroupItem', "TextFrame"]);
     });

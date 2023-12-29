@@ -77,6 +77,10 @@ export default new class GithubService {
         });
     }
 
+    public downloadGithubFile(file: GithubFile): Promise<string> {
+        return this.downloadFile(file.download_url, file.name);
+    }
+
     public downloadFile(url: string, filename?: string): Promise<string> {
         const options = {
             'headers': this.githubHeaders
