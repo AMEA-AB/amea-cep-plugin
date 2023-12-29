@@ -1,4 +1,5 @@
-import { os, fs, path as _path, https } from '../lib/cep/node';
+import { path as _path, https } from '../lib/cep/node';
+import FileService from './file-service';
 
 export interface GithubFile {
     name: string;
@@ -76,41 +77,10 @@ export default new class GithubService {
         });
     }
 
-    public downloadFileFromRepo(path: string, filename?: string): Promise<string> {
-        const urlPath = `/${this.githubOwner}/${this.githubRepo}/${this.githubBranch}/${path}`;
-        return this.downloadFile(urlPath, filename);
-    }
-
     public downloadFile(url: string, filename?: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-
-            const tempDir = os.tmpdir();
-            const filePath = _path.join(tempDir, filename ?? _path.basename(url));
-
-            const fileStream = fs.createWriteStream(filePath);
-
-            const options = {
-                'method': 'GET',
-                'hostname': 'raw.githubusercontent.com',
-                'path': url,
-                'headers': this.githubHeaders,
-                'maxRedirects': 20
-            };
-
-            const req = https.request(options, (response) => {
-                response.pipe(fileStream);
-                fileStream.on('finish', function () {
-                    fileStream.close();
-                    resolve(filePath);
-                });
-            }).on('error', function (error) {
-                fs.unlink(filePath, () => { });
-                reject(error);
-            });
-
-            req.end();
-        });
+        const options = {
+            'headers': this.githubHeaders
+        };
+        return FileService.downloadFile(url, options, filename);
     }
-
-
 }
