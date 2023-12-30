@@ -6,37 +6,56 @@ import FileInputSingle from '../components/FileInputSingle.vue';
 import FolderInput from '../components/FolderInput.vue';
 import { evalTS } from '../lib/utils/bolt';
 
+defineProps({
+  showTemplateSelect: {
+    type: Boolean,
+    default: () => true
+  },
+});
+
 const templates = ref<GithubFile[]>([]);
 const selectedTemplate = ref<GithubFile | undefined>(undefined);
+const selectedTemplateFile = ref<string | undefined>(undefined);
+const activeDocumentName = ref<string | undefined>(undefined);
 const outputName = ref<string | undefined>(undefined);
 const outputType = ref<string>('pdf');
 const outputFolder = ref<string | undefined>(undefined);
 const editableItems = ref<Record<string, string> | undefined>(undefined);
 const templateData = ref<Record<string, string>>({});
 
+const closeDocument = () => {
+    if(!activeDocumentName) return;
+    return evalTS('closeDocument', activeDocumentName.value);
+}
+
 onMounted(() => {
     GithubService.getFileNamesInFolder('templates').then((files) => {
         templates.value = files;
     });
 
-    watch(selectedTemplate, async (newValue, oldValue) => {
-        editableItems.value = undefined;
-        templateData.value = {};
-        if (oldValue) {
-            await evalTS('closeDocumentByName', oldValue.name);
+    watch(selectedTemplate, async (newValue) => {
+        if (newValue) {
+            selectedTemplateFile.value = await GithubService.downloadGithubFile(newValue);
+            return;
         }
-        if (!newValue) return;
-        const templateFile = await GithubService.downloadGithubFile(newValue);
-        await evalTS('openDocument', templateFile);
-        editableItems.value = await evalTS('getEditableItems', ['RasterItem', 'GroupItem', "TextFrame"]);
+        selectedTemplateFile.value = undefined;
+    });
+
+    watch(selectedTemplateFile, async (newValue, oldValue) => {
+        if (oldValue) {
+            await closeDocument();
+        }
+        templateData.value = {};
+        if(!newValue) {
+            editableItems.value = undefined;
+        } else {
+            activeDocumentName.value = await evalTS('openDocument', newValue);
+            editableItems.value = await evalTS('getEditableItems', ['RasterItem', 'GroupItem', "TextFrame"]);
+        }
     });
 });
 
-onBeforeRouteLeave(() => {
-    if (selectedTemplate.value) {
-        evalTS('closeDocumentByName', selectedTemplate.value.name);
-    }
-});
+onBeforeRouteLeave(closeDocument);
 
 const populateTemplate = async () => {
     const outputFile = `${outputFolder.value}/${outputName.value}.${outputType.value}`
@@ -45,17 +64,15 @@ const populateTemplate = async () => {
     if(!selectedTemplate.value) return;
 
     // Reset UI
-    evalTS('closeDocumentByName', selectedTemplate.value.name);
+    closeDocument();
     selectedTemplate.value = undefined;
     outputName.value = undefined;
-    editableItems.value = undefined;
-    templateData.value = {};
 }
 </script>
 
 <template>
     <div>
-        <div class="input-group mb-3">
+        <div v-if="showTemplateSelect" class="input-group mb-3">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="templateSelect">Template</label>
             </div>
@@ -63,6 +80,12 @@ const populateTemplate = async () => {
                 <option disabled value="">Choose...</option>
                 <option v-for="files in templates" :key="files.name" :value="files">{{ files.name }}</option>
             </select>
+        </div>
+        <div v-else class="mb-3">
+            <label>Template</label>
+            <FileInputSingle v-model="selectedTemplateFile"
+                title="Select template file" :filetypes="['pdf', 'ai']">
+            </FileInputSingle>
         </div>
         <div class="mb-3">
             <label for="outputName">Output name</label>
@@ -93,7 +116,7 @@ const populateTemplate = async () => {
         </div>
         <div class="mb-3">
             <button @click="populateTemplate" class="btn btn-primary"
-                v-bind:disabled="!selectedTemplate || !outputName || !outputFolder || !editableItems">Process</button>
+                v-bind:disabled="!selectedTemplateFile || !outputName || !outputFolder || !editableItems">Process</button>
         </div>
     </div>
 </template>

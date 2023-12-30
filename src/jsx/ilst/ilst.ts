@@ -1,4 +1,4 @@
-import closeDocumentByName from "./functions/closeDocumentByName";
+import closeDocument from "./functions/closeDocument";
 import generateFromExcel from "./functions/generateFromExcel";
 import getEditableItems from "./functions/getEditableItems";
 import openDocument from "./functions/openDocument";
@@ -9,7 +9,7 @@ import populateJig from "./functions/populateJig";
 import saveDocument from "./functions/saveDocument";
 
 export {
-    closeDocumentByName,
+    closeDocument,
     generateFromExcel,
     getEditableItems,
     openDocument,

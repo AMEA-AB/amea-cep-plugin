@@ -47,6 +47,18 @@ const router = createRouter({
                         showInMenu: true,
                         navBack: "/app/"
                     }
+                },
+                {
+                    path: "/manual-template-local",
+                    name: "manual-template-local",
+                    component: ManualTemplate,
+                    props: {
+                        showTemplateSelect: false
+                    },
+                    meta: {
+                        showInMenu: true,
+                        navBack: "/app/"
+                    }
                 }
             ]
         }

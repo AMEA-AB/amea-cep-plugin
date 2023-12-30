@@ -1,8 +1,8 @@
-export default function openDocument(path: string) {
+export default function openDocument(path: string): string | undefined {
     const file = new File(path);
     if (file.exists) {
-        app.open(file);
-        return true;
+        const doc = app.open(file);
+        return doc.name;
     }
-    return false;
+    return undefined;
 }
