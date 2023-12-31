@@ -40,6 +40,18 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: "/jig-local",
+                    name: "jig-local",
+                    component: Jig,
+                    props: {
+                        showJigSelect: false
+                    },
+                    meta: {
+                        showInMenu: true,
+                        navBack: "/app/"
+                    }
+                },
+                {
                     path: "/manual-template",
                     name: "manual-template",
                     component: ManualTemplate,
