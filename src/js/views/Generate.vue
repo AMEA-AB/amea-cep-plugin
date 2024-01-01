@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import * as XLSX from 'xlsx';
 import FileService from '../services/file-service';
+import TemplateService from '../services/template-service';
 import type { RowData } from '../../jsx/ilst/functions/generateFromExcel';
 import { evalTS } from '../lib/utils/bolt';
 
@@ -33,11 +34,6 @@ const buttonTitle = computed(() => {
     return `Process ${rows} row${rows > 1 ? 's' : ''}`;
 })
 
-const getTemplateUrl = (templateName: string) => {
-    const url = "https://cdn.ameaab.se/illustrator-templates/" + encodeURIComponent(templateName);
-    return url;
-}
-
 const getFilesForRows = async (rows: RowData[]) => {
     const urlRegex = /^https?:\/\/((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
     const dataUrls: Set<string> = new Set();
@@ -48,14 +44,14 @@ const getFilesForRows = async (rows: RowData[]) => {
                 dataUrls.add(row[key]);
             }
         }
-        dataUrls.add(getTemplateUrl(row['Template']));
+        dataUrls.add(TemplateService.getTemplateUrl(row['Template']));
     }
     const urlToFilePaths = await FileService.downloadFiles(Array.from(dataUrls));
 
     for (const row of rows) {
         for(const column of Object.keys(row)) {
             if(column === 'Template') {
-                const url = getTemplateUrl(row[column]);
+                const url = TemplateService.getTemplateUrl(row[column]);
                 row[column] = urlToFilePaths[url];
                 continue;
             }
