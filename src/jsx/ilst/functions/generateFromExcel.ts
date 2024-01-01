@@ -60,20 +60,17 @@ export default function generateFromExcel(rowData: RowData) {
     }
     var doc = app.open(templateFile);
     const numLayers = doc.layers.length;
-    if (numLayers === 1) {
-        handleLayer(doc, 0, rowData)
-        doc.close(SaveOptions.DONOTSAVECHANGES);
+    if(numLayers <= 0) {
+        throw new Error("Could not find any layers in the template");
     }
-    else if (numLayers > 1) {
+    handleLayer(doc, 0, rowData)
         doc.close(SaveOptions.DONOTSAVECHANGES);
-        for (var i = 0; i < numLayers; i++) {
+    if (numLayers > 1) {
+        for (var i = 1; i < numLayers; i++) {
             doc = app.open(templateFile);
             handleLayer(doc, i, rowData)
             doc.close(SaveOptions.DONOTSAVECHANGES);
         }
-    }
-    else {
-        throw new Error("Could not find any layers in the template");
     }
 
 }
