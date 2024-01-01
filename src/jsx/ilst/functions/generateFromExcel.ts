@@ -21,19 +21,19 @@ function generateFilename(rowData: RowData, layerName?: string) {
     return filename;
 }
 
-function createOutputFile(rowData: RowData, layerName?: string) {
+function createOutputFile(rowData: RowData, outputFolder: string, groupByJig: boolean, layerName?: string) {
     const jig = rowData["Jig"].split('.')[0];
     const timestamp = currentTimestamp('YYYY-MM-DD');
-    const outputFolder = new Folder(Folder.desktop + '/Output/' + timestamp + (jig ? '/' + jig : ''));
-    if (!outputFolder.exists) {
-        outputFolder.create();
+    const _outputFolder = new Folder(outputFolder + '/' + timestamp + ((jig && groupByJig) ? '/' + jig : ''));
+    if (!_outputFolder.exists) {
+        _outputFolder.create();
     }
     const filename = generateFilename(rowData, layerName);
-    const outputFile = createUniqueFile(outputFolder, filename);
+    const outputFile = createUniqueFile(_outputFolder, filename);
     return outputFile;
 }
 
-function handleLayer(doc: Document, layerIndex: number, rowData: RowData) {
+function handleLayer(doc: Document, layerIndex: number, rowData: RowData, outputFolder: string, groupByJig: boolean) {
     const layer = doc.layers[layerIndex];
     const layerName = doc.layers.length > 1 ? layer.name : undefined;
 
@@ -45,14 +45,15 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData) {
     }
     populateLayer(layer, rowData);
     try {
-        const outputFile = createOutputFile(rowData, layerName);
+        const outputFile = createOutputFile(rowData, outputFolder, groupByJig, layerName);
         saveDocument(doc, outputFile);
+        return outputFile;
     } catch (e) {
         throw new Error("Could not save document");
     }
 }
 
-export default function generateFromExcel(rowData: RowData) {
+export default function generateFromExcel(rowData: RowData, outputFolder: string = Folder.desktop + '/Output/', groupByJig = true) {
     const templateFile = File(rowData["Template"]);
     if(!templateFile.exists) {
         Window.alert("Template file " + templateFile.name + " does not exist");
@@ -63,14 +64,13 @@ export default function generateFromExcel(rowData: RowData) {
     if(numLayers <= 0) {
         throw new Error("Could not find any layers in the template");
     }
-    handleLayer(doc, 0, rowData)
-        doc.close(SaveOptions.DONOTSAVECHANGES);
+    handleLayer(doc, 0, rowData, outputFolder, groupByJig);
+    doc.close(SaveOptions.DONOTSAVECHANGES);
     if (numLayers > 1) {
         for (var i = 1; i < numLayers; i++) {
             doc = app.open(templateFile);
-            handleLayer(doc, i, rowData)
+            handleLayer(doc, 0, rowData, outputFolder, groupByJig);
             doc.close(SaveOptions.DONOTSAVECHANGES);
         }
     }
-
 }
