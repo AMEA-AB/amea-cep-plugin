@@ -18,7 +18,7 @@ export default function fillJigAndSave(jigFile: string, files: string[]) {
 
     // Place images in compoundPathItems
     for (var i = 0; i < compoundPathItems.length && fileIndex < files.length; i++) {
-        var file = File(files[fileIndex]);
+        var file = new File(files[fileIndex]);
         if(!file.exists) {
             throw new Error("File " + file.name + " does not exist");
         }

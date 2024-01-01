@@ -64,7 +64,7 @@ const getFillColorOfGroup = (groupItem: LayerGroupOverlap) => {
 
 const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     if (typeof file === 'string') {
-        file = File(file);
+        file = new File(file);
     }
     const doc = app.open(file);
     const fillColor = getFillColorOfGroup(groupItem)!;
@@ -98,7 +98,7 @@ const handleRasterItems = (rasterItems: RasterItem[], data: Record<string, strin
     for (var i = 0; i < length; i++) {
         var rasterItem = rasterItems[i];
         if (shouldEdit(rasterItem, data)) {
-            var file = File(data[rasterItem.name]);
+            var file = new File(data[rasterItem.name]);
             var placedItem = placeItem(rasterItem, file);
             embedImage(placedItem);
         }
