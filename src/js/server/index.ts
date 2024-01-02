@@ -1,28 +1,12 @@
-const Koa = require('koa') as typeof import('koa');
-const Router = require('@koa/router') as typeof import('@koa/router');
-const cors = require('@koa/cors') as typeof import('@koa/cors');
+const express = require('express') as typeof import('express');
+const cors = require('cors') as typeof import('cors');
 
-const app = new Koa();
-const router = new Router();
-
+const app = express();
+app.use(express.json());
 app.use(cors());
 
-app.use(async (ctx, next) => {
-  try {
-    await next();
-  } catch (err) {
-    const error = err as any;
-    ctx.status = error.status || 500;
-    ctx.body = error.message;
-    ctx.app.emit('error', error, ctx);
-  }
+app.get('/ping', (_req, res) => {
+  res.send('pong');
 });
-
-
-router.get('/ping', (ctx) => {
-  ctx.body = 'pong';
-});
-
-app.use(router.routes());
 
 app.listen(3001);
