@@ -3,14 +3,7 @@ import createUniqueFile from "../helpers/createUniqueFile";
 import populateLayer from "../helpers/populateLayer";
 import saveDocument from "../helpers/saveDocument";
 
-export interface RowData {
-    "Ouput type": string;
-    "Jig": string;
-    "Template": string;
-    "Order number": string;
-    "Product": string;
-    [key: string]: string;
-}
+import type { RowData } from '../../../shared/types';
 
 function generateFilename(rowData: RowData, layerName?: string) {
     const replaceAllInString = function (input: string, search: string, replace: string) {
