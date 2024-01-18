@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router';
-import GithubService, { GithubFile } from '../services/github-service';
-import FileInputSingle from '../components/FileInputSingle.vue';
-import FolderInput from '../components/FolderInput.vue';
-import { evalTS } from '../lib/utils/bolt';
+import GithubService, { GithubFile } from '../../services/github-service';
+import FileInputSingle from '../../components/FileInputSingle.vue';
+import FolderInput from '../../components/FolderInput.vue';
+import { evalTS } from '../../lib/utils/bolt';
 
 defineProps({
   showTemplateSelect: {
@@ -24,7 +24,7 @@ const editableItems = ref<Record<string, string> | undefined>(undefined);
 const templateData = ref<Record<string, string>>({});
 
 const closeDocument = () => {
-    if(!activeDocumentName) return;
+    if(!activeDocumentName.value) return;
     return evalTS('closeDocument', activeDocumentName.value);
 }
 

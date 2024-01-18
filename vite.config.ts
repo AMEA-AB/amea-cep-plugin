@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 import { cep, runAction } from "vite-cep-plugin";
 import cepConfig from "./cep.config";

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import GithubService, { GithubFile } from '../services/github-service';
-import FileInputSingle from '../components/FileInputSingle.vue';
-import FileInputMultiple from '../components/FileInputMultiple.vue';
-import { evalTS } from '../lib/utils/bolt';
+import GithubService, { GithubFile } from '../../services/github-service';
+import FileInputSingle from '../../components/FileInputSingle.vue';
+import FileInputMultiple from '../../components/FileInputMultiple.vue';
+import { evalTS } from '../../lib/utils/bolt';
 
 const props = defineProps({
     showJigSelect: {

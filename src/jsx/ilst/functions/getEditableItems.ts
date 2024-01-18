@@ -1,3 +1,5 @@
+import { includes } from '../../utils/utils';
+
 function isEditableItem(item: PageItem) {
     if (item.locked || item.hidden) {
         return false;
@@ -17,7 +19,7 @@ export default function getEditableItems<T extends string>(filterType: T[] = [])
     if(app?.activeDocument) {
         for(let i = 0; i < app.activeDocument.pageItems.length; i++) {
             const item = app.activeDocument.pageItems[i];
-            if(isEditableItem(item) && (!filterType.length || Array.includes(filterType, item.typename))) {
+            if(isEditableItem(item) && (!filterType.length || includes(filterType, item.typename))) {
                 editableItems[item.name] = item.typename as T;
             }
         }

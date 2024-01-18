@@ -12,9 +12,12 @@ switch (BridgeTalk.appName as ApplicationName) {
   case "illustratorbeta":
     host[ns] = ilst;
     break;
+
+  default:
+    break;
 }
 
-export type Scripts = typeof ilst
+export type Scripts = typeof ilst;
 
 // https://extendscript.docsforadobe.dev/interapplication-communication/bridgetalk-class.html?highlight=bridgetalk#appname
 type ApplicationName =

@@ -1,23 +1,30 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Panel from "./layouts/Panel.vue";
+import Panel from "../layouts/Panel.vue";
 
 import Home from "./views/Home.vue";
 import Generate from "./views/Generate.vue";
 import Jig from "./views/Jig.vue";
 import ManualTemplate from "./views/ManualTemplate.vue";
 
+const posix = (str: string) => str.replace(/\\/g, "/");
+const encodeSpaces = (str: string) => str.replace(/ /g, "%20");
+
+const cepBasename = window.cep_node
+  ? encodeSpaces(posix(window.cep_node.global.__dirname))
+  : '/';
+
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(cepBasename),
     routes: [
         {
-            path: "/app/",
-            alias: "/app/index.html",
-            name: "app",
+            path: "/main",
+            alias: "/main/index.html",
+            name: "main",
             component: Panel,
             children: [
                 {
-                    path: "",
+                    path: "/main/index.html",
                     name: "home",
                     component: Home
                 },
@@ -27,7 +34,9 @@ const router = createRouter({
                     component: Generate,
                     meta: {
                         showInMenu: true,
-                        navBack: "/app/"
+                        navBack: {
+                            name: "home"
+                        }
                     }
                 },
                 {
@@ -36,7 +45,9 @@ const router = createRouter({
                     component: Jig,
                     meta: {
                         showInMenu: true,
-                        navBack: "/app/"
+                        navBack: {
+                            name: "home"
+                        }
                     }
                 },
                 {
@@ -48,7 +59,9 @@ const router = createRouter({
                     },
                     meta: {
                         showInMenu: true,
-                        navBack: "/app/"
+                        navBack: {
+                            name: "home"
+                        }
                     }
                 },
                 {
@@ -57,7 +70,9 @@ const router = createRouter({
                     component: ManualTemplate,
                     meta: {
                         showInMenu: true,
-                        navBack: "/app/"
+                        navBack: {
+                            name: "home"
+                        }
                     }
                 },
                 {
@@ -69,7 +84,9 @@ const router = createRouter({
                     },
                     meta: {
                         showInMenu: true,
-                        navBack: "/app/"
+                        navBack: {
+                            name: "home"
+                        }
                     }
                 }
             ]

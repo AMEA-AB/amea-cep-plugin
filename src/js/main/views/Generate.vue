@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import * as XLSX from 'xlsx';
-import FileService from '../services/file-service';
-import TemplateService from '../services/template-service';
-import type { RowData } from '../../shared/types';
-import { evalTS } from '../lib/utils/bolt';
+import FileService from '../../services/file-service';
+import TemplateService from '../../services/template-service';
+import type { RowData } from '../../../shared/types';
+import { evalTS } from '../../lib/utils/bolt';
 
 const rowData = ref<RowData[] | undefined>(undefined)
 const loading = ref(false);

@@ -26,8 +26,8 @@ const config: CEP_Config = {
 
   panels: [
     {
-      mainPath: "./app/index.html",
-      name: "app",
+      mainPath: "./main/index.html",
+      name: "main",
       panelDisplayName: "AMEA AB",
       autoVisible: true,
       width: 400,

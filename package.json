@@ -1,6 +1,6 @@
 {
   "name": "bolt-cep",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "watch": "tsc && vite build --watch true",
@@ -36,7 +36,7 @@
     "babel-plugin-transform-scss": "^1.1.0",
     "babel-preset-env": "^1.7.0",
     "bootstrap": "^5.3.2",
-    "bootstrap-icons": "^1.11.2",
+    "bootstrap-icons": "^1.11.3",
     "core-js": "3",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",

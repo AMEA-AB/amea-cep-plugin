@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import App from "./main.vue";
-import { initBolt } from "./lib/utils/bolt";
+import { initBolt } from "../lib/utils/bolt";
 import router from "./router";
 
 import "bootstrap/scss/bootstrap.scss";
