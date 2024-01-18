@@ -87,6 +87,7 @@ export default defineConfig({
     },
     target: "chrome74",
     outDir,
+    emptyOutDir: true,
   },
 });
 
