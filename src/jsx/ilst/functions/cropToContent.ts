@@ -1,4 +1,4 @@
-export default function cropToContent(): [number, number] {
+export default function cropToContent(): void {
     const document = app.activeDocument;
     const artboardRect = document.artboards[0].artboardRect
     const right = artboardRect[2];
@@ -24,6 +24,4 @@ export default function cropToContent(): [number, number] {
     }
 
     document.artboards[0].artboardRect = [mostLeft, mostTop, right, bottom];
-
-    return [mostLeft, mostTop];
 }
