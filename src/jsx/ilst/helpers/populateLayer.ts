@@ -1,4 +1,4 @@
-import cropClipGroup from "./cropClipGroup";
+import clipDocument from "./clipDocument";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
@@ -7,6 +7,7 @@ import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
 declare global {
     const enum ElementPlacement {
         PLACEBEFORE = 'placeBefore',
+        PLACEATBEGINNING = 'placeAtBeginning',
     }
 }
 
@@ -69,14 +70,15 @@ const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     const doc = app.open(file);
     const fillColor = getFillColorOfGroup(groupItem)!;
     setFillColorOfGroupItem(doc.layers[0], fillColor);
+    clipDocument(doc);
+
     const filename = file.name.split(".").shift();
     const pdfFile = new File(Folder.temp + '/' + filename + '.pdf');
     saveDocument(doc, pdfFile);
     doc.close();
     const placedItem = placeItem(groupItem, pdfFile);
 
-    const embeddedItem = embedImage<GroupItem>(placedItem);
-    cropClipGroup(embeddedItem);
+    embedImage<GroupItem>(placedItem);
 }
 
 const handleGroupItems = (groupItems: GroupItem[], data: Record<string, string>) => {
