@@ -6,9 +6,12 @@ import type { RouteRecordRaw } from 'vue-router';
 const props = defineProps({
   title: {
     type: String,
-    default: 'AMEA AB',
-    required: false
+    default: 'AMEA AB'
   },
+  extraOptions: {
+    type: Object as () => Record<string, () => any>,
+    default: () => {}
+  }
 });
 
 const router = useRouter()
@@ -33,8 +36,20 @@ const menuTitle = (route: RouteRecordRaw) => {
   <div>
     <h1 style="color: red">{{ props.title }}</h1>
     <div class="d-grid gap-2 col-6 mx-auto">
-      <button v-for="route in filteredRoutes" :key="route.name" @click="router.push(route.path)" type="button"
-        class="btn btn-primary">{{ menuTitle(route) }}</button>
+      <button
+        v-for="route in filteredRoutes"
+        :key="route.name"
+        @click="router.push(route.path)"
+        type="button"
+        class="btn btn-primary"
+      >{{ menuTitle(route) }}</button>
+      <button
+        v-for="(callback, title) in props.extraOptions"
+        :key="title"
+        @click="callback"
+        type="button"
+        class="btn btn-primary"
+      >{{ title }}</button>
     </div>
   </div>
 </template>
