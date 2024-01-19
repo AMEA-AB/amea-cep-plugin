@@ -43,6 +43,10 @@ export default new class GithubService {
         }
     }
 
+    public getGithubFileUrl(path: string): string {
+        return `https://raw.githubusercontent.com/${this.githubOwner}/${this.githubRepo}/${this.githubBranch}/${path}`
+    }
+
     public getFileNamesInFolder(path: string, extension?: string[]): Promise<GithubFile[]> {
         return new Promise((resolve, reject) => {
             const urlPath = `/repos/${this.githubOwner}/${this.githubRepo}/contents/${path}?ref=${this.githubBranch}`;
@@ -86,5 +90,12 @@ export default new class GithubService {
             'headers': this.githubHeaders
         };
         return FileService.downloadFile(url, options, filename);
+    }
+
+    public downloadFiles(urls: string[]) {
+        const options = {
+            'headers': this.githubHeaders
+        };
+        return FileService.downloadFiles(urls, options);
     }
 }

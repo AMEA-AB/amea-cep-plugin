@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import * as XLSX from 'xlsx';
 import FileService from '../../services/file-service';
-import TemplateService from '../../services/template-service';
+import GithubService from '../../services/github-service';
 import type { RowData } from '../../../shared/types';
 import { evalTS } from '../../lib/utils/bolt';
 
@@ -34,28 +34,31 @@ const buttonTitle = computed(() => {
     return `Process ${rows} row${rows > 1 ? 's' : ''}`;
 })
 
+const getTemplateUrl = (templateName: string) => GithubService.getGithubFileUrl(`templates/${templateName}`);
+
 const getFilesForRows = async (rows: RowData[]) => {
     const urlRegex = /^https?:\/\/((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
     const dataUrls: Set<string> = new Set();
+    const templateUrls: Set<string> = new Set();
 
     for (const row of rows) {
-        for (const key of Object.keys(row)) {
-            if (urlRegex.test(row[key])) {
-                dataUrls.add(row[key]);
+        for (const columnName of Object.keys(row)) {
+            if(columnName === 'Template') {
+                templateUrls.add(getTemplateUrl(row[columnName]));
+            }else if (urlRegex.test(row[columnName])) {
+                dataUrls.add(row[columnName]);
             }
         }
-        dataUrls.add(TemplateService.getTemplateUrl(row['Template']));
     }
     const urlToFilePaths = await FileService.downloadFiles(Array.from(dataUrls));
+    const templateToFilePaths = await GithubService.downloadFiles(Array.from(templateUrls));
 
     for (const row of rows) {
         for(const column of Object.keys(row)) {
             if(column === 'Template') {
-                const url = TemplateService.getTemplateUrl(row[column]);
-                row[column] = urlToFilePaths[url];
-                continue;
-            }
-            if(urlToFilePaths.hasOwnProperty(row[column])) {
+                const url = getTemplateUrl(row[column]);
+                row[column] = templateToFilePaths[url];
+            } else if(urlToFilePaths.hasOwnProperty(row[column])) {
                 row[column] = urlToFilePaths[row[column]];
             }
         }
