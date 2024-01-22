@@ -1,29 +1,20 @@
 import currentTimestamp from "../helpers/currentTimestamp";
 import saveDocument from "../helpers/saveDocument";
 
-function savePopulatedJig(doc: Document) {
-    var bundlesFolder = new Folder(Folder.desktop + '/Bundles');
-    if (!bundlesFolder.exists) {
-        bundlesFolder.create();
-    }
-    var pdfFile = new File(bundlesFolder + '/' + currentTimestamp('YYYY-MM-DD hh.mm.ss') + '.pdf');
-    saveDocument(doc, pdfFile);
-}
-
-export default function fillJigAndSave(jigFile: string, files: string[]) {
-    var doc = app.open(File(jigFile));
-    var layer = doc.layers[0];
-    var compoundPathItems = layer.compoundPathItems;
-    var fileIndex = 0;
+export default function fillJigAndSave(jigFile: string, files: string[], outputFolder: string) {
+    const doc = app.open(File(jigFile));
+    const layer = doc.layers[0];
+    const compoundPathItems = layer.compoundPathItems;
+    let fileIndex = 0;
 
     // Place images in compoundPathItems
-    for (var i = 0; i < compoundPathItems.length && fileIndex < files.length; i++) {
-        var file = new File(files[fileIndex]);
-        if(!file.exists) {
+    for (let i = 0; i < compoundPathItems.length && fileIndex < files.length; i++) {
+        const file = new File(files[fileIndex]);
+        if (!file.exists) {
             throw new Error("File " + file.name + " does not exist");
         }
-        var compoundPathItem = compoundPathItems[i];
-        var placedItem = compoundPathItem.layer.placedItems.add();
+        const compoundPathItem = compoundPathItems[i];
+        const placedItem = compoundPathItem.layer.placedItems.add();
         placedItem.file = file;
         placedItem.position = compoundPathItem.position;
         placedItem.width = compoundPathItem.width;
@@ -36,15 +27,16 @@ export default function fillJigAndSave(jigFile: string, files: string[]) {
         }
     }
     // Remove all compoundPathItems
-    for (var i = compoundPathItems.length - 1; i >= 0; i--) {
+    for (let i = compoundPathItems.length - 1; i >= 0; i--) {
         compoundPathItems[i].remove();
     }
 
-    savePopulatedJig(doc);
+    const pdfFile = new File(outputFolder + '/' + currentTimestamp('YYYY-MM-DD hh.mm.ss') + '.pdf');
+    saveDocument(doc, pdfFile);
     doc.close();
 
     if (fileIndex < files.length) {
-        var remainingFiles = files.slice(fileIndex);
-        fillJigAndSave(jigFile, remainingFiles);
+        const remainingFiles = files.slice(fileIndex);
+        fillJigAndSave(jigFile, remainingFiles, outputFolder);
     }
 }
