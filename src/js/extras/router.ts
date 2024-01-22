@@ -1,16 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { cepBasename } from "../lib/utils/vue-router";
 
 import Panel from "../layouts/Panel.vue";
 import MainMenu from "../components/MainMenu.vue";
 
 import menuExtras from "./menuExtras";
-
-const posix = (str: string) => str.replace(/\\/g, "/");
-const encodeSpaces = (str: string) => str.replace(/ /g, "%20");
-
-const cepBasename = window.cep_node
-  ? encodeSpaces(posix(window.cep_node.global.__dirname))
-  : '/';
 
 const router = createRouter({
     history: createWebHistory(cepBasename),
