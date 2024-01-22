@@ -69,9 +69,12 @@ const processRows = async () => {
     if (!rowData.value) return;
     loading.value = true;
     try {
+        const date = new Date();
+        const dateString = date.toISOString().slice(0,10);
+        const outputFolder = await evalTS('getDesktopFolder', {path: `Output/${dateString}`});
         await getFilesForRows(rowData.value)
         for(const row of rowData.value) {
-            await evalTS('generateFromExcel', row);
+            await evalTS('generateFromExcel', row, `${outputFolder}/${row.Jig.split('.')[0]}`);
         }
     } catch (error) {
         console.error(error);
