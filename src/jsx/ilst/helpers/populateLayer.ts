@@ -3,14 +3,6 @@ import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
 
-
-declare global {
-    const enum ElementPlacement {
-        PLACEBEFORE = 'placeBefore',
-        PLACEATBEGINNING = 'placeAtBeginning',
-    }
-}
-
 type LayerGroupOverlap = GroupItem | Layer;
 
 const shouldEdit = (item: PageItem, data: Record<string, string>) => {
