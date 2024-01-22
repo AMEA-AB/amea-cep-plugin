@@ -55,11 +55,20 @@ const setFillColorOfGroupItem = (groupItem: LayerGroupOverlap, color: Color) => 
 }
 
 const getFillColorOfGroup = (groupItem: LayerGroupOverlap) => {
-    if (groupItem.pathItems.length > 0) {
-        return groupItem.pathItems[0].fillColor;
-    } else if (groupItem.compoundPathItems.length > 0) {
-        return groupItem.compoundPathItems[0].pathItems[0].fillColor;
+    for (let i = 0; i < groupItem.pathItems.length; i++) {
+        if (groupItem.pathItems[i].filled) {
+            return groupItem.pathItems[i].fillColor;
+        }
     }
+
+    for (let i = 0; i < groupItem.compoundPathItems.length; i++) {
+        for (let j = 0; j < groupItem.compoundPathItems[i].pathItems.length; j++) {
+            if (groupItem.compoundPathItems[i].pathItems[j].filled) {
+                return groupItem.compoundPathItems[i].pathItems[j].fillColor;
+            }
+        }
+    }
+
     return null;
 }
 
