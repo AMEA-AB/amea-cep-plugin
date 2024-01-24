@@ -7,7 +7,7 @@ import openDocument from "./functions/openDocument";
 import { openFileDialogMultiple, openFileDialogSingle } from "./functions/openFileDialog";
 import openFolderDialog from "./functions/openFolderDialog";
 import populateDocument from "./functions/populateDocument";
-import populateJig from "./functions/populateJig";
+import { populateJig, populateJigSmart } from "./functions/populateJig";
 import saveDocument from "./functions/saveDocument";
 
 export {
@@ -23,5 +23,6 @@ export {
     openFolderDialog,
     populateDocument,
     populateJig,
+    populateJigSmart,
     saveDocument
 };
