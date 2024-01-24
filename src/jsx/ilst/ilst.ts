@@ -1,6 +1,6 @@
 import closeDocument from "./functions/closeDocument";
 import cropToContent from "./functions/cropToContent";
-import generateFromExcel from "./functions/generateFromExcel";
+import generateFromRowData from "./functions/generateFromRowData";
 import getEditableItems from "./functions/getEditableItems";
 import { getDesktopFolder, getTempFolder } from "./functions/getFolder";
 import openDocument from "./functions/openDocument";
@@ -13,7 +13,7 @@ import saveDocument from "./functions/saveDocument";
 export {
     closeDocument,
     cropToContent,
-    generateFromExcel,
+    generateFromRowData,
     getEditableItems,
     getDesktopFolder,
     getTempFolder,

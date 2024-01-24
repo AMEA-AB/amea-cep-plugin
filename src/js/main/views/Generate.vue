@@ -74,7 +74,7 @@ const processRows = async () => {
         const outputFolder = await evalTS('getDesktopFolder', {path: `Output/${dateString}`});
         await getFilesForRows(rowData.value)
         for(const row of rowData.value) {
-            await evalTS('generateFromExcel', row, `${outputFolder}/${row.Jig.split('.')[0]}`);
+            await evalTS('generateFromRowData', row, `${outputFolder}/${row.Jig.split('.')[0]}`);
         }
     } catch (error) {
         console.error(error);

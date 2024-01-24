@@ -39,7 +39,7 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData, output
     }
 }
 
-export default function generateFromExcel(rowData: RowData, outputFolder: string) {
+export default function generateFromRowData(rowData: RowData, outputFolder: string) {
     const templateFile = new File(rowData["Template"]);
     if (!templateFile.exists) {
         throw new Error("Template file " + templateFile.name + " does not exist");

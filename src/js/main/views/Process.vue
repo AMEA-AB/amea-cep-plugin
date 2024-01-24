@@ -73,7 +73,7 @@ const processRows = async () => {
         await getFilesForRows(rowData.value);
         const templateOuputFolder = await evalTS('getTempFolder');
         for (const row of rowData.value) {
-            const outputs = await evalTS('generateFromExcel', row, templateOuputFolder);
+            const outputs = await evalTS('generateFromRowData', row, templateOuputFolder);
             if (!jigFiles.hasOwnProperty(row.Jig)) {
                 jigFiles[row.Jig] = [];
             }
