@@ -43,7 +43,8 @@ const populateJig = async () => {
         jigPath = await GithubService.downloadGithubFile(selectedJig.value);
     }
     if (jigPath && selectedFiles.value.length > 0) {
-        await evalTS('populateJig', jigPath, selectedFiles.value);
+        const outputFolder = await evalTS('getDesktopFolder', {path: 'Bundles'});
+        await evalTS('populateJig', jigPath, selectedFiles.value, outputFolder);
         selectedFiles.value = [];
     }
 }

@@ -1,29 +1,56 @@
 import currentTimestamp from "../helpers/currentTimestamp";
 import saveDocument from "../helpers/saveDocument";
 
-function savePopulatedJig(doc: Document) {
-    var bundlesFolder = new Folder(Folder.desktop + '/Bundles');
-    if (!bundlesFolder.exists) {
-        bundlesFolder.create();
+type FilesGroup = string[];
+
+function findFirstAvailibility(array: any[][], slots: number) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].length < slots) {
+            return [i, array[i].length];
+        }
     }
-    var pdfFile = new File(bundlesFolder + '/' + currentTimestamp('YYYY-MM-DD hh.mm.ss') + '.pdf');
-    saveDocument(doc, pdfFile);
+    return [null, null];
 }
 
-export default function fillJigAndSave(jigFile: string, files: string[]) {
-    var doc = app.open(File(jigFile));
-    var layer = doc.layers[0];
-    var compoundPathItems = layer.compoundPathItems;
-    var fileIndex = 0;
+function structureFiles(slots: number, files: FilesGroup[]) {
+    files = files.sort((a, b) => {
+        return a.length > b.length ? -1 : 1;
+    });
+    const output: string[][] = [];
+
+    for (let i = 0; i < files.length; i++) {
+        let [index, innerIndex] = findFirstAvailibility(output, slots);
+
+        if (index === null || innerIndex === null) {
+            output.push([]);
+            index = output.length - 1;
+            innerIndex = 0;
+        }
+
+        for (let j = 0; j < files[i].length; j++) {
+            if (index + j >= output.length) {
+                output.push([]);
+            }
+            output[index + j][innerIndex] = files[i][j];
+        }
+    }
+    return output;
+}
+
+function fillJigAndSave(jigFile: string, files: string[], outputFolder: string) {
+    const doc = app.open(File(jigFile));
+    const layer = doc.layers[0];
+    const compoundPathItems = layer.compoundPathItems;
+    let fileIndex = 0;
 
     // Place images in compoundPathItems
-    for (var i = 0; i < compoundPathItems.length && fileIndex < files.length; i++) {
-        var file = new File(files[fileIndex]);
-        if(!file.exists) {
+    for (let i = 0; i < compoundPathItems.length && fileIndex < files.length; i++) {
+        const file = new File(files[fileIndex]);
+        if (!file.exists) {
             throw new Error("File " + file.name + " does not exist");
         }
-        var compoundPathItem = compoundPathItems[i];
-        var placedItem = compoundPathItem.layer.placedItems.add();
+        const compoundPathItem = compoundPathItems[i];
+        const placedItem = compoundPathItem.layer.placedItems.add();
         placedItem.file = file;
         placedItem.position = compoundPathItem.position;
         placedItem.width = compoundPathItem.width;
@@ -36,15 +63,33 @@ export default function fillJigAndSave(jigFile: string, files: string[]) {
         }
     }
     // Remove all compoundPathItems
-    for (var i = compoundPathItems.length - 1; i >= 0; i--) {
+    for (let i = compoundPathItems.length - 1; i >= 0; i--) {
         compoundPathItems[i].remove();
     }
 
-    savePopulatedJig(doc);
+    const pdfFile = new File(outputFolder + '/' + currentTimestamp('YYYY-MM-DD hh.mm.ss') + '.pdf');
+    saveDocument(doc, pdfFile);
     doc.close();
 
     if (fileIndex < files.length) {
-        var remainingFiles = files.slice(fileIndex);
-        fillJigAndSave(jigFile, remainingFiles);
+        const remainingFiles = files.slice(fileIndex);
+        fillJigAndSave(jigFile, remainingFiles, outputFolder);
     }
+}
+
+function fillJigSmartAndSave(jigFile: string, files: FilesGroup[], outputFolder: string) {
+    const doc = app.open(File(jigFile));
+    const layer = doc.layers[0];
+    const compoundPathItems = layer.compoundPathItems;
+    const slots = compoundPathItems.length;
+    doc.close();
+    const structuredFiles = structureFiles(slots, files);
+    for(let i = 0; i < structuredFiles.length; i++) {
+        fillJigAndSave(jigFile, structuredFiles[i], outputFolder);
+    }
+}
+
+export {
+    fillJigAndSave as populateJig,
+    fillJigSmartAndSave as populateJigSmart
 }

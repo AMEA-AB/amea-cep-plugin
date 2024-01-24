@@ -1,4 +1,3 @@
-import currentTimestamp from "../helpers/currentTimestamp";
 import createUniqueFile from "../helpers/createUniqueFile";
 import populateLayer from "../helpers/populateLayer";
 import saveDocument from "../helpers/saveDocument";
@@ -14,31 +13,25 @@ function generateFilename(rowData: RowData, layerName?: string) {
     return filename;
 }
 
-function createOutputFile(rowData: RowData, outputFolder: string, groupByJig: boolean, layerName?: string) {
-    const jig = rowData["Jig"].split('.')[0];
-    const timestamp = currentTimestamp('YYYY-MM-DD');
-    const _outputFolder = new Folder(outputFolder + '/' + timestamp + ((jig && groupByJig) ? '/' + jig : ''));
-    if (!_outputFolder.exists) {
-        _outputFolder.create();
-    }
+function createOutputFile(rowData: RowData, outputFolder: string, layerName?: string) {
     const filename = generateFilename(rowData, layerName);
-    const outputFile = createUniqueFile(_outputFolder, filename);
+    const outputFile = createUniqueFile(new Folder(outputFolder), filename);
     return outputFile;
 }
 
-function handleLayer(doc: Document, layerIndex: number, rowData: RowData, outputFolder: string, groupByJig: boolean) {
+function handleLayer(doc: Document, layerIndex: number, rowData: RowData, outputFolder: string) {
     const layer = doc.layers[layerIndex];
     const layerName = doc.layers.length > 1 ? layer.name : undefined;
 
     // Remove all layers except the current one from the copy
-    for (var j = 0; j < doc.layers.length; j++) {
+    for (let j = 0; j < doc.layers.length; j++) {
         if (doc.layers[j] !== layer) {
             doc.layers[j].remove();
         }
     }
     populateLayer(layer, rowData);
     try {
-        const outputFile = createOutputFile(rowData, outputFolder, groupByJig, layerName);
+        const outputFile = createOutputFile(rowData, outputFolder, layerName);
         saveDocument(doc, outputFile);
         return outputFile;
     } catch (e) {
@@ -46,24 +39,26 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData, output
     }
 }
 
-export default function generateFromExcel(rowData: RowData, outputFolder: string = Folder.desktop + '/Output/', groupByJig = true) {
+export default function generateFromRowData(rowData: RowData, outputFolder: string) {
     const templateFile = new File(rowData["Template"]);
-    if(!templateFile.exists) {
-        Window.alert("Template file " + templateFile.name + " does not exist");
-        return;
+    if (!templateFile.exists) {
+        throw new Error("Template file " + templateFile.name + " does not exist");
     }
-    var doc = app.open(templateFile);
+    let doc = app.open(templateFile);
     const numLayers = doc.layers.length;
-    if(numLayers <= 0) {
+    if (numLayers <= 0) {
         throw new Error("Could not find any layers in the template");
     }
-    handleLayer(doc, 0, rowData, outputFolder, groupByJig);
+    let outputFile = handleLayer(doc, 0, rowData, outputFolder);
     doc.close(SaveOptions.DONOTSAVECHANGES);
+    const outputFiles: string[] = [outputFile.fsName];
     if (numLayers > 1) {
-        for (var i = 1; i < numLayers; i++) {
+        for (let i = 1; i < numLayers; i++) {
             doc = app.open(templateFile);
-            handleLayer(doc, 0, rowData, outputFolder, groupByJig);
+            outputFile = handleLayer(doc, 0, rowData, outputFolder);
+            outputFiles.push(outputFile.fsName);
             doc.close(SaveOptions.DONOTSAVECHANGES);
         }
     }
+    return outputFiles;
 }

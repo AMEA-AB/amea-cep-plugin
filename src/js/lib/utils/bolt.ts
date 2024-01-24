@@ -76,10 +76,10 @@ export const evalTS = <
   return new Promise(function (resolve, reject) {
     const formattedArgs = args
       .map((arg) => {
-        console.log(JSON.stringify(arg));
         return `${JSON.stringify(arg)}`;
       })
       .join(",");
+    console.log(functionName, args.map((arg) => JSON.stringify(arg)));
     csi.evalScript(
       `try{
           var host = typeof $ !== 'undefined' ? $ : window;
@@ -98,6 +98,7 @@ export const evalTS = <
             console.error("REFERENCE ERROR");
             reject(parsed);
           } else {
+            console.log(`${functionName} returned`, parsed);
             resolve(parsed);
           }
         } catch (error) {

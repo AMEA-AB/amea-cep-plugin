@@ -1,14 +1,7 @@
-import cropClipGroup from "./cropClipGroup";
+import clipDocument from "./clipDocument";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
-
-
-declare global {
-    const enum ElementPlacement {
-        PLACEBEFORE = 'placeBefore',
-    }
-}
 
 type LayerGroupOverlap = GroupItem | Layer;
 
@@ -54,11 +47,20 @@ const setFillColorOfGroupItem = (groupItem: LayerGroupOverlap, color: Color) => 
 }
 
 const getFillColorOfGroup = (groupItem: LayerGroupOverlap) => {
-    if (groupItem.pathItems.length > 0) {
-        return groupItem.pathItems[0].fillColor;
-    } else if (groupItem.compoundPathItems.length > 0) {
-        return groupItem.compoundPathItems[0].pathItems[0].fillColor;
+    for (let i = 0; i < groupItem.pathItems.length; i++) {
+        if (groupItem.pathItems[i].filled) {
+            return groupItem.pathItems[i].fillColor;
+        }
     }
+
+    for (let i = 0; i < groupItem.compoundPathItems.length; i++) {
+        for (let j = 0; j < groupItem.compoundPathItems[i].pathItems.length; j++) {
+            if (groupItem.compoundPathItems[i].pathItems[j].filled) {
+                return groupItem.compoundPathItems[i].pathItems[j].fillColor;
+            }
+        }
+    }
+
     return null;
 }
 
@@ -69,14 +71,15 @@ const replaceSVG = (groupItem: GroupItem, file: File | string) => {
     const doc = app.open(file);
     const fillColor = getFillColorOfGroup(groupItem)!;
     setFillColorOfGroupItem(doc.layers[0], fillColor);
+    clipDocument(doc);
+
     const filename = file.name.split(".").shift();
     const pdfFile = new File(Folder.temp + '/' + filename + '.pdf');
     saveDocument(doc, pdfFile);
     doc.close();
     const placedItem = placeItem(groupItem, pdfFile);
 
-    const embeddedItem = embedImage<GroupItem>(placedItem);
-    cropClipGroup(embeddedItem);
+    embedImage<GroupItem>(placedItem);
 }
 
 const handleGroupItems = (groupItems: GroupItem[], data: Record<string, string>) => {
