@@ -77,7 +77,9 @@ const processRows = async () => {
             if (!jigFiles.hasOwnProperty(row.Jig)) {
                 jigFiles[row.Jig] = [];
             }
-            jigFiles[row.Jig].push(outputs);
+            for(let i = 0; i < row['Quantity']; i++) {
+                jigFiles[row.Jig].push(outputs);
+            }
         }
         const outputFolder = await evalTS('getDesktopFolder', { path: 'Bundles' });
         for (const jigName of Object.keys(jigFiles)) {

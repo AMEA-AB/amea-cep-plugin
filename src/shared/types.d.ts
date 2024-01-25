@@ -1,8 +1,9 @@
 export interface RowData {
-    "Ouput type": string;
-    "Jig": string;
-    "Template": string;
     "Order number": string;
     "Product": string;
+    "Quantity": number;
+    "Template": string;
+    "Jig": string;
+    "Ouput type": string;
     [key: string]: string;
 }
