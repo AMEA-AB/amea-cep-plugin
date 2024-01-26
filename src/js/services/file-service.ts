@@ -33,14 +33,26 @@ export default new class FileService {
         });
     }
 
-    public downloadFiles(urls: string[], options?: RequestOptions): Promise<{ [url: string]: string }> {
-        return Promise.all(urls.map(url => this.downloadFile(url, options))).then(filePaths => {
-            const urlToFilePaths: { [url: string]: string } = {};
-            urls.forEach((url, index) => {
-                urlToFilePaths[url] = filePaths[index];
-            });
-            return urlToFilePaths;
+    public async downloadFiles(urls: string[], options?: RequestOptions): Promise<{ [url: string]: string }> {
+        const filePaths = await Promise.all(urls.map(url_1 => this.downloadFile(url_1, options)));
+        const urlToFilePaths: { [url_3: string]: string; } = {};
+        urls.forEach((url_4, index) => {
+            urlToFilePaths[url_4] = filePaths[index];
         });
-        
+        return urlToFilePaths;
+    }
+
+    public moveFileToFolder(source: string, destinationFolder: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const filename = _path.basename(source);
+            const destination = _path.join(destinationFolder, filename);
+            fs.rename(source, destination, error => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 }

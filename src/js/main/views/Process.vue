@@ -69,16 +69,21 @@ const processRows = async () => {
     if (!rowData.value) return;
     loading.value = true;
     const jigFiles: Record<string, Array<string[]>> = {};
+    const nonJigFiles: string[] = [];
     try {
         await getFilesForRows(rowData.value);
         const templateOuputFolder = await evalTS('getTempFolder');
         for (const row of rowData.value) {
             const outputs = await evalTS('generateFromRowData', row, templateOuputFolder);
-            if (!jigFiles.hasOwnProperty(row.Jig)) {
-                jigFiles[row.Jig] = [];
-            }
-            for(let i = 0; i < row['Quantity']; i++) {
-                jigFiles[row.Jig].push(outputs);
+            if(row.hasOwnProperty('Jig') && row.Jig) {
+                if (!jigFiles.hasOwnProperty(row.Jig)) {
+                    jigFiles[row.Jig] = [];
+                }
+                for(let i = 0; i < row['Quantity']; i++) {
+                    jigFiles[row.Jig].push(outputs);
+                }
+            } else {
+                nonJigFiles.push(...outputs);
             }
         }
         const outputFolder = await evalTS('getDesktopFolder', { path: 'Bundles' });
@@ -87,6 +92,9 @@ const processRows = async () => {
             const jigFileURL = GithubService.getGithubFileUrl(`jigs/${jigName}`);
             const jigFile = await GithubService.downloadFile(jigFileURL);
             await evalTS('populateJigSmart', jigFile, inputs, outputFolder);
+        }
+        for(const file of nonJigFiles) {
+            await FileService.moveFileToFolder(file, outputFolder);
         }
     } catch (error) {
         console.error(error);

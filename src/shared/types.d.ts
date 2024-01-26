@@ -3,7 +3,7 @@ export interface RowData {
     "Product": string;
     "Quantity": number;
     "Template": string;
-    "Jig": string;
+    "Jig"?: string;
     "Ouput type": string;
     [key: string]: string;
 }
