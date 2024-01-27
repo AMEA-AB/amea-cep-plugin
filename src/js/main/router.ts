@@ -4,7 +4,6 @@ import { cepBasename } from "../lib/utils/vue-router";
 import Panel from "../layouts/Panel.vue";
 
 import MainMenu from "../components/MainMenu.vue";
-import Generate from "./views/Generate.vue";
 import Process from "./views/Process.vue";
 import Jig from "./views/Jig.vue";
 import ManualTemplate from "./views/ManualTemplate.vue";
@@ -22,17 +21,6 @@ const router = createRouter({
                     path: "/main/index.html",
                     name: "home",
                     component: MainMenu
-                },
-                {
-                    path: "/generate",
-                    name: "generate",
-                    component: Generate,
-                    meta: {
-                        showInMenu: true,
-                        navBack: {
-                            name: "home"
-                        }
-                    }
                 },
                 {
                     path: "/process",
