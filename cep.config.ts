@@ -44,6 +44,16 @@ const config: CEP_Config = {
       height: 600,
       minWidth: 200,
       minHeight: 300,
+    },
+    {
+      mainPath: "./settings/index.html",
+      name: "settings",
+      panelDisplayName: "AMEA AB - settings",
+      autoVisible: true,
+      width: 400,
+      height: 600,
+      minWidth: 200,
+      minHeight: 300,
     }
   ],
   build: {

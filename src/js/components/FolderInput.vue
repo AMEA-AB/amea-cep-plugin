@@ -26,7 +26,7 @@ const onSelectFolder = async () => {
 </script>
 
 <template>
-  <div class="mb-3">
+  <div>
     <button @click="onSelectFolder" v-bind:disabled="disabled" class="btn btn-secondary">
       <span>{{ modelValue ? 'Folder selected' : 'Select Folder' }}</span>
     </button>
