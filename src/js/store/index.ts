@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import FolderService from "../services/folder-service";
+import { path as _path } from "../lib/cep/node";
 
 interface Settings {
     outputFolder?: string;
@@ -26,4 +28,8 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     return { settings, updateSettings }
-}, { persist: true });
+}, {
+    json: {
+        path: _path.join(FolderService.getSettingsFolder(), 'settings.json')
+    }
+});
