@@ -55,7 +55,8 @@ const router = createRouter({
                         showInMenu: true,
                         navBack: {
                             name: "home"
-                        }
+                        },
+                        advanced: true
                     }
                 },
                 {
@@ -80,7 +81,8 @@ const router = createRouter({
                         showInMenu: true,
                         navBack: {
                             name: "home"
-                        }
+                        },
+                        advanced: true
                     }
                 }
             ]

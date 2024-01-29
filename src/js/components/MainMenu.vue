@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 import { useRouter } from 'vue-router'
+import { useSettingsStore } from '../store';
 import type { RouteRecordRaw } from 'vue-router';
+
+const settingsStore = useSettingsStore();
 
 const props = defineProps({
   title: {
@@ -16,9 +19,19 @@ const props = defineProps({
 
 const router = useRouter()
 
-const filteredRoutes = router.options.routes
-  .flatMap(route => route.children || []) // Flatten the array of child routes
-  .filter(childRoute => !!childRoute.meta?.showInMenu); // Filter child routes
+const filteredRoutes = computed(() => {
+  return router.options.routes
+    .flatMap(route => route.children || []) // Flatten the array of child routes
+    .filter(childRoute => {
+      if(!childRoute.meta?.showInMenu) {
+        return false;
+      }
+      if(childRoute.meta?.advanced && !settingsStore.settings.advancedMode) {
+        return false;
+      }
+      return true;
+    }); // Filter child routes
+});
 
 
 const menuTitle = (route: RouteRecordRaw) => {
