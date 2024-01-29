@@ -110,12 +110,12 @@ A standard JavaScript event, the base class for CEP events.
  * @param appId - The unique identifier of the application that generated the event.
  * @param extensionId - The unique identifier of the extension that generated the event.
  */
-declare class CSEvent {
+declare class CSEvent<T> {
   constructor(type: any, scope: any, appId: any, extensionId: any);
   /**
    * Event-specific data.
    */
-  data: any;
+  data: T;
 }
 
 /**
