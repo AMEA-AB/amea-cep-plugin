@@ -1,5 +1,6 @@
 import { path as _path, https } from '../lib/cep/node';
 import FileService from './file-service';
+import { useSettingsStore } from '../store';
 
 export interface GithubFile {
     name: string;
@@ -19,20 +20,25 @@ export interface GithubFile {
 }
 
 export default new class GithubService {
+
+    private get settings() {
+        return useSettingsStore().settings;
+    }
+
     private get githubOwner(): string {
-        return process.env.GITHUB_OWNER!;
+        return this.settings.githubOwner;
     }
 
     private get githubRepo(): string {
-        return process.env.GITHUB_REPO!;
+        return this.settings.githubRepo;
     }
 
     private get githubBranch(): string {
-        return process.env.GITHUB_BRANCH!;
+        return this.settings.githubBranch;
     }
 
     private get githubToken(): string {
-        return process.env.GITHUB_TOKEN!;
+        return this.settings.githubToken;
     }
 
     private get githubHeaders() {
