@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import * as XLSX from 'xlsx';
 import FileService from '../../services/file-service';
+import FolderService from '../../services/folder-service';
 import GithubService from '../../services/github-service';
 import type { RowData } from '../../../shared/types';
 import { evalTS } from '../../lib/utils/bolt';
@@ -72,7 +73,7 @@ const processRows = async () => {
     const nonJigFiles: string[] = [];
     try {
         await getFilesForRows(rowData.value);
-        const templateOuputFolder = await evalTS('getTempFolder');
+        const templateOuputFolder = FolderService.getTempFolder();
         for (const row of rowData.value) {
             const outputs = await evalTS('generateFromRowData', row, templateOuputFolder);
             if(row.hasOwnProperty('Jig') && row.Jig) {
@@ -86,7 +87,7 @@ const processRows = async () => {
                 nonJigFiles.push(...outputs);
             }
         }
-        const outputFolder = await evalTS('getDesktopFolder', { path: 'Bundles' });
+        const outputFolder = FolderService.getDesktopFolder('Bundles');
         for (const jigName of Object.keys(jigFiles)) {
             const inputs = jigFiles[jigName];
             const jigFileURL = GithubService.getGithubFileUrl(`jigs/${jigName}`);
@@ -94,7 +95,7 @@ const processRows = async () => {
             await evalTS('populateJigSmart', jigFile, inputs, outputFolder);
         }
         for(const file of nonJigFiles) {
-            await FileService.moveFileToFolder(file, outputFolder);
+            FileService.moveFileToFolder(file, outputFolder);
         }
     } catch (error) {
         console.error(error);

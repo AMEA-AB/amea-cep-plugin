@@ -18,4 +18,12 @@ export default new class FolderService {
         }
         return settingsFolder;
     }
+
+    public getDesktopFolder(path = ''): string {
+        return _path.join(os.homedir(), 'Desktop', path);
+    }
+
+    public getTempFolder(path = ''): string {
+        return _path.join(os.tmpdir(), path);
+    }
 }

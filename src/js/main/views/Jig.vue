@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import GithubService, { GithubFile } from '../../services/github-service';
+import FolderService from '../../services/folder-service';
 import FileInputSingle from '../../components/FileInputSingle.vue';
 import FileInputMultiple from '../../components/FileInputMultiple.vue';
 import { evalTS } from '../../lib/utils/bolt';
@@ -43,7 +44,7 @@ const populateJig = async () => {
         jigPath = await GithubService.downloadGithubFile(selectedJig.value);
     }
     if (jigPath && selectedFiles.value.length > 0) {
-        const outputFolder = await evalTS('getDesktopFolder', {path: 'Bundles'});
+        const outputFolder = FolderService.getDesktopFolder('Bundles');
         await evalTS('populateJig', jigPath, selectedFiles.value, outputFolder);
         selectedFiles.value = [];
     }
