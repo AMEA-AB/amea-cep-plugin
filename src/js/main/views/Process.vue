@@ -97,6 +97,7 @@ const processRows = async () => {
         for(const file of nonJigFiles) {
             FileService.moveFileToFolder(file, outputFolder);
         }
+        FolderService.deleteFolder(templateOuputFolder);
     } catch (error) {
         console.error(error);
     } finally {

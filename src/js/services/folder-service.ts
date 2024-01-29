@@ -1,4 +1,4 @@
-import { os, path as _path } from '../lib/cep/node';
+import { fs, os, path as _path, crypto } from '../lib/cep/node';
 
 export default new class FolderService {
     public getSettingsFolder(): string {
@@ -23,7 +23,15 @@ export default new class FolderService {
         return _path.join(os.homedir(), 'Desktop', path);
     }
 
-    public getTempFolder(path = ''): string {
-        return _path.join(os.tmpdir(), path);
+    public getTempFolder(): string {
+        const folder = _path.join(os.tmpdir(), crypto.randomBytes(16).toString('hex'));
+        if(fs.existsSync(folder)) {
+            return this.getTempFolder();
+        }
+        return folder;
+    }
+
+    public deleteFolder(path: string) {
+        fs.rmSync(path, { recursive: true, force: true });
     }
 }
