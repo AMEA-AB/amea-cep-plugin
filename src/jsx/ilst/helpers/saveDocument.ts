@@ -5,6 +5,10 @@ export default function saveDocument(doc: Document, outputFile?: File) {
         }
         outputFile = new File(Folder.temp + '/' + doc.fullName.name);
     }
+    const outputFolder = outputFile.parent;
+    if(!outputFolder.exists) {
+        outputFolder.create();
+    }
     const outputType = outputFile.name.split(".").pop();
     var saveOpts: PDFSaveOptions | IllustratorSaveOptions | undefined;
     var exportOpts: ExportOptionsSVG | undefined;

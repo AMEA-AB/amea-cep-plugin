@@ -42,17 +42,10 @@ export default new class FileService {
         return urlToFilePaths;
     }
 
-    public moveFileToFolder(source: string, destinationFolder: string): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const filename = _path.basename(source);
-            const destination = _path.join(destinationFolder, filename);
-            fs.rename(source, destination, error => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        });
+    public moveFileToFolder(sourceFile: string, destinationFolder: string) {
+        fs.mkdirSync(destinationFolder, { recursive: true });
+        const filename = _path.basename(sourceFile);
+        const destination = _path.join(destinationFolder, filename);
+        fs.renameSync(sourceFile, destination);
     }
 }
