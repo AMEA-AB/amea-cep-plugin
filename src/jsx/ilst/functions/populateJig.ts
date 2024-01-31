@@ -52,9 +52,11 @@ function fillJigAndSave(jigFile: string, files: string[], outputFolder: string) 
         const compoundPathItem = compoundPathItems[i];
         const placedItem = compoundPathItem.layer.placedItems.add();
         placedItem.file = file;
-        placedItem.position = compoundPathItem.position;
-        placedItem.width = compoundPathItem.width;
-        placedItem.height = compoundPathItem.height;
+        const centerX = compoundPathItem.position[0] + compoundPathItem.width / 2;
+        const centerY = compoundPathItem.position[1] + compoundPathItem.height / 2;
+        const x = centerX - placedItem.width / 2;
+        const y = centerY - placedItem.height / 2;
+        placedItem.position = [x, y];
         fileIndex++;
         try {
             placedItem.embed();
