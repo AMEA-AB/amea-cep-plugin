@@ -1,6 +1,9 @@
 declare enum ElementPlacement {
-  PLACEBEFORE = 'placeBefore',
+  INSIDE = 'inside',
+  PLACEAFTER = 'placeAfter',
   PLACEATBEGINNING = 'placeAtBeginning',
+  PLACEATEND = 'placeAtEnd',
+  PLACEBEFORE = 'placeBefore',
 }
 
 declare var JSON: {
