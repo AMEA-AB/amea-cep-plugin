@@ -1,9 +1,15 @@
+export type TemplateFlag = 'mirror-horizontally' | 'mirror-vertically';
+
 export interface RowData {
     "Order number": string;
-    "Product": string;
     "Quantity": number;
     "Template": string;
-    "Jig"?: string;
     "Ouput type": string;
+    "Jig"?: string;
+    "Flags"?: TemplateFlag[];
     [key: string]: string;
+}
+
+export interface RowDataRaw extends Omit<RowData, 'Flags'> {
+    Flags?: string;
 }

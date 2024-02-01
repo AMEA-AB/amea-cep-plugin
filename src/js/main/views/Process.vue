@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import FileService from '../../services/file-service';
 import FolderService from '../../services/folder-service';
 import GithubService from '../../services/github-service';
-import type { RowData } from '../../../shared/types';
+import type { RowData, RowDataRaw } from '../../../shared/types';
 import { evalTS } from '../../lib/utils/bolt';
 
 const rowData = ref<RowData[] | undefined>(undefined)
@@ -23,7 +23,15 @@ const onFileChange = (e: Event) => {
         const worksheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[worksheetName];
 
-        const jsonData = XLSX.utils.sheet_to_json<RowData>(worksheet);
+        const jsonColumns = ['Flags'];
+        const jsonData = XLSX.utils.sheet_to_json<RowDataRaw>(worksheet).map(row => {
+            for (const column of jsonColumns) {
+                if (row.hasOwnProperty(column)) {
+                    row[column] = JSON.parse(row[column]);
+                }
+            }
+            return row as RowData;
+        });
         rowData.value = jsonData;
     };
     reader.readAsArrayBuffer(file);

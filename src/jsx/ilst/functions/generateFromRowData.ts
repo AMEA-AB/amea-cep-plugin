@@ -1,3 +1,4 @@
+import applyTemplateFlags from "../helpers/applyTemplateFlags";
 import createUniqueFile from "../helpers/createUniqueFile";
 import populateLayer from "../helpers/populateLayer";
 import saveDocument from "../helpers/saveDocument";
@@ -30,6 +31,9 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData, output
         }
     }
     populateLayer(layer, rowData);
+    if(rowData.Flags) {
+        applyTemplateFlags(doc, rowData["Flags"]);
+    }
     try {
         const outputFile = createOutputFile(rowData, outputFolder, layerName);
         saveDocument(doc, outputFile);
