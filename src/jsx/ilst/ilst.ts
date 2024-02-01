@@ -8,6 +8,7 @@ import { openFileDialogMultiple, openFileDialogSingle } from "./functions/openFi
 import openFolderDialog from "./functions/openFolderDialog";
 import populateDocument from "./functions/populateDocument";
 import { populateJig, populateJigSmart } from "./functions/populateJig";
+import rotateDocument from "./functions/rotateDocument";
 import saveDocument from "./functions/saveDocument";
 
 export {
@@ -24,5 +25,6 @@ export {
     populateDocument,
     populateJig,
     populateJigSmart,
+    rotateDocument,
     saveDocument
 };

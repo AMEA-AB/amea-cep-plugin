@@ -18,10 +18,12 @@ The excel file must contain some specific columns for this to work. User data ma
 ## Flags
 Flags are used to apply different functions to the document.
 
-| Flag                | description                      |
-| ------------------- | -------------------------------- |
-| mirror-horizontally | Mirror the document horizontally |
-| mirror-vertically   | Mirror the document vertically   |
+| Flag                     | description                           |
+| ------------------------ | ------------------------------------- |
+| mirror-horizontally      | Mirror the document horizontally      |
+| mirror-vertically        | Mirror the document vertically        |
+| rotate-clockwise         | Rotate the document clockwise         |
+| rotate-counter-clockwise | Rotate the document counter clockwise |
 
 ## Scripts
 

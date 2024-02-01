@@ -1,4 +1,8 @@
-export type TemplateFlag = 'mirror-horizontally' | 'mirror-vertically';
+export type TemplateFlag = 
+    'mirror-horizontally' |
+    'mirror-vertically' |
+    'rotate-clockwise' |
+    'rotate-counter-clockwise';
 
 export interface RowData {
     "Order number": string;
