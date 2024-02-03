@@ -7,16 +7,16 @@ import groupAllItemsInLayer, { cleanupGroup } from "../helpers/groupAllItemsInLa
  * @param {boolean} [horizontally=false] - If true, mirrors the layer horizontally. Otherwise, mirrors it vertically.
  */
 export function mirrorLayer(layer: Layer = app.activeDocument.activeLayer, horizontally: boolean = false) {
-    const { group, rectangle, lockedItems } = groupAllItemsInLayer(layer);
+    const groupComponents = groupAllItemsInLayer(layer);
 
     // Mirror the group
     let matrix = app.getScaleMatrix(100, -100);
     if (horizontally) {
         matrix = app.getScaleMatrix(-100, 100);
     }
-    group.transform(matrix);
+    groupComponents.group.transform(matrix);
 
-    cleanupGroup(group, rectangle, lockedItems);
+    cleanupGroup(groupComponents);
 }
 
 /**

@@ -33,9 +33,9 @@ function rotateArtBoard(artboard: Artboard) {
  */
 export default function rotateDocument(doc: Document = app.activeDocument, counterClockwise: boolean = false) {
     for (let i = 0; i < doc.layers.length; i++) {
-        const { group, rectangle, lockedItems } = groupAllItemsInLayer(doc.layers[i]);
-        group.rotate(counterClockwise ? 90 : -90);
-        cleanupGroup(group, rectangle, lockedItems);
+        const groupComponents = groupAllItemsInLayer(doc.layers[i]);
+        groupComponents.group.rotate(counterClockwise ? 90 : -90);
+        cleanupGroup(groupComponents);
     }
     const artboard = doc.artboards[0];
     rotateArtBoard(artboard);
