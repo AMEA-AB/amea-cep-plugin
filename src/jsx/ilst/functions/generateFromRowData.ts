@@ -5,17 +5,8 @@ import saveDocument from "../helpers/saveDocument";
 
 import type { RowData } from '../../../shared/types';
 
-function generateFilename(rowData: RowData, layerName?: string) {
-    const replaceAllInString = function (input: string, search: string, replace: string) {
-        return input.split(search).join(replace);
-    }
-    const order_number = replaceAllInString(rowData['Order number'], '#', '');
-    const filename = order_number + (layerName ? " " + layerName : "") + "." + rowData["Ouput type"];
-    return filename;
-}
-
-function createOutputFile(rowData: RowData, outputFolder: string, layerName?: string) {
-    const filename = generateFilename(rowData, layerName);
+function createOutputFile(outputName: string, outputType: string, outputFolder: string, layerName?: string) {
+    const filename = outputName + (layerName ? " " + layerName : "") + "." + outputType;
     const outputFile = createUniqueFile(new Folder(outputFolder), filename);
     return outputFile;
 }
@@ -35,7 +26,7 @@ function handleLayer(doc: Document, layerIndex: number, rowData: RowData, output
         applyTemplateFlags(doc, rowData["Flags"]);
     }
     try {
-        const outputFile = createOutputFile(rowData, outputFolder, layerName);
+        const outputFile = createOutputFile(rowData['Output name'], rowData['Output type'], outputFolder, layerName);
         saveDocument(doc, outputFile);
         return outputFile;
     } catch (e) {

@@ -4,10 +4,10 @@ import * as XLSX from 'xlsx';
 import FileService from '../../services/file-service';
 import FolderService from '../../services/folder-service';
 import GithubService from '../../services/github-service';
-import type { RowData, RowDataRaw } from '../../../shared/types';
+import type { RowDataExcel, RowDataExcelRaw } from '../../../shared/types';
 import { evalTS } from '../../lib/utils/bolt';
 
-const rowData = ref<RowData[] | undefined>(undefined)
+const rowData = ref<RowDataExcel[] | undefined>(undefined)
 const loading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -24,13 +24,13 @@ const onFileChange = (e: Event) => {
         const worksheet = workbook.Sheets[worksheetName];
 
         const jsonColumns = ['Flags'];
-        const jsonData = XLSX.utils.sheet_to_json<RowDataRaw>(worksheet).map(row => {
+        const jsonData = XLSX.utils.sheet_to_json<RowDataExcelRaw>(worksheet).map(row => {
             for (const column of jsonColumns) {
                 if (row[column] && row[column] !== '') {
                     row[column] = JSON.parse(row[column]);
                 }
             }
-            return row as RowData;
+            return row as RowDataExcel;
         });
         rowData.value = jsonData;
     };
@@ -45,7 +45,7 @@ const buttonTitle = computed(() => {
 
 const getTemplateUrl = (templateName: string) => GithubService.getGithubFileUrl(`templates/${templateName}`);
 
-const getFilesForRows = async (rows: RowData[]) => {
+const getFilesForRows = async (rows: RowDataExcel[]) => {
     const urlRegex = /^https?:\/\/((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
     const dataUrls: Set<string> = new Set();
     const templateUrls: Set<string> = new Set();

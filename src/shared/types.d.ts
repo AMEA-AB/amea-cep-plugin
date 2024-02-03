@@ -5,8 +5,7 @@ export type TemplateFlag =
     'rotate-counter-clockwise';
 
 export interface RowData {
-    "Order number": string;
-    "Quantity": number;
+    "Output name": string;
     "Template": string;
     "Ouput type": string;
     "Jig"?: string;
@@ -14,6 +13,10 @@ export interface RowData {
     [key: string]: string;
 }
 
-export interface RowDataRaw extends Omit<RowData, 'Flags'> {
+interface RowDataExcel extends RowData {
+    "Quantity": number;
+}
+
+export interface RowDataExcelRaw extends Omit<RowDataExcel, 'Flags'> {
     Flags?: string;
 }
