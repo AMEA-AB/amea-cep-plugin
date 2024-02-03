@@ -59,7 +59,7 @@ export default function generateFromRowData(rowData: RowData, outputFolder: stri
     if (numLayers > 1) {
         for (let i = 1; i < numLayers; i++) {
             doc = app.open(templateFile);
-            outputFile = handleLayer(doc, 0, rowData, outputFolder);
+            outputFile = handleLayer(doc, i, rowData, outputFolder);
             outputFiles.push(outputFile.fsName);
             doc.close(SaveOptions.DONOTSAVECHANGES);
         }
