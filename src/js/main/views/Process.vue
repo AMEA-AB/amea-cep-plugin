@@ -26,7 +26,7 @@ const onFileChange = (e: Event) => {
         const jsonColumns = ['Flags'];
         const jsonData = XLSX.utils.sheet_to_json<RowDataRaw>(worksheet).map(row => {
             for (const column of jsonColumns) {
-                if (row.hasOwnProperty(column)) {
+                if (row[column] && row[column] !== '') {
                     row[column] = JSON.parse(row[column]);
                 }
             }
