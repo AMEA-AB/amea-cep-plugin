@@ -1,13 +1,13 @@
-export type TemplateFlag = 
-    'mirror-horizontally' |
-    'mirror-vertically' |
-    'rotate-clockwise' |
-    'rotate-counter-clockwise';
+import type { TemplateFlags } from './shared';
+
+export type OutputType = 'pdf' | 'ai' | 'svg';
+
+export type TemplateFlag = typeof TemplateFlags[number];
 
 export interface RowData {
     "Output name": string;
     "Template": string;
-    "Ouput type": string;
+    "Output type": OutputType;
     "Jig"?: string;
     "Flags"?: TemplateFlag[];
     [key: string]: string;
