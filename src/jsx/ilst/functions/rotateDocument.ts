@@ -1,4 +1,5 @@
 import groupAllItemsInLayer, { cleanupGroup } from "../helpers/groupAllItemsInLayer";
+import changeArtboardSize from "../helpers/changeArtboardSize";
 
 /**
  * Rotates the given artboard 90 degrees around its center by switching its width and height.
@@ -10,19 +11,8 @@ function rotateArtBoard(artboard: Artboard) {
     const width = artboardRect[2] - artboardRect[0];
     const height = artboardRect[1] - artboardRect[3];
 
-    // Calculate the center of the artboard
-    const centerX = artboardRect[0] + width / 2;
-    const centerY = artboardRect[1] - height / 2;
-
-    // Switch width and height
-    const newWidth = height;
-    const newHeight = width;
-
-    // Calculate the new position so that the center stays in the same place
-    const newLeft = centerX - newWidth / 2;
-    const newTop = centerY + newHeight / 2;
-
-    artboard.artboardRect = [newLeft, newTop, newLeft + newWidth, newTop - newHeight];
+    // Change the artboard size, switching width and height
+    changeArtboardSize(artboard, height, width);
 }
 
 /**
