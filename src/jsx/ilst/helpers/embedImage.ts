@@ -1,5 +1,14 @@
 import { includes } from "../../utils/utils";
 
+/**
+ * Embeds a placed image in the document and returns the new embedded image item.
+ * The function throws an error if the image cannot be embedded or if the embedded image cannot be found.
+ *
+ * @template T - The type of the embedded image, which must extend GroupItem or RasterItem.
+ * @param {PlacedItem} placedItem - The placed image to embed.
+ * @returns {T} - The new embedded image.
+ * @throws {Error} - If the image cannot be embedded or if the embedded image cannot be found.
+ */
 export default function embedImage<T extends GroupItem | RasterItem>(placedItem: PlacedItem): T {
     const layer = placedItem.layer;
     const filename = placedItem.file.name;

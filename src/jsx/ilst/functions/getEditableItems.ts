@@ -1,6 +1,13 @@
 import { includes } from '../../utils/utils';
 
-function isEditableItem(item: PageItem) {
+/**
+ * Checks if a page item is editable.
+ * A page item is considered editable if it is not locked or hidden, and if its parent (if any) is also editable.
+ *
+ * @param {PageItem} item - The page item to check.
+ * @returns {boolean} - Returns true if the item is editable, false otherwise.
+ */
+function isEditableItem(item: PageItem): boolean {
     if (item.locked || item.hidden) {
         return false;
     }
@@ -14,6 +21,14 @@ function isEditableItem(item: PageItem) {
     return true;
 }
 
+/**
+ * Gets all editable items from the active document, optionally filtered by type.
+ * An item is considered editable if it is not locked or hidden, and if its parent (if any) is also editable.
+ *
+ * @template T - The type of the filter.
+ * @param {T[]} [filterType=[]] - An optional array of types to filter the items by.
+ * @returns {Record<string, T>} - An object mapping item names to their types for all editable items.
+ */
 export default function getEditableItems<T extends string>(filterType: T[] = []): Record<string, T> {
     const editableItems: Record<string, T> = {};
     if(app?.activeDocument) {

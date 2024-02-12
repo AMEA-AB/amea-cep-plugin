@@ -1,3 +1,9 @@
+/**
+ * Clips the document by creating a clipping mask that matches the size of the active artboard.
+ * Excess outside the clipping mask is removed.
+ *
+ * @param {Document} doc - The document to clip.
+ */
 export default function clipDocument(doc: Document) {
     const clipGroup = doc.groupItems.add();
 

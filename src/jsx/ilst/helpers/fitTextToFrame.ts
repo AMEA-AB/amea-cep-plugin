@@ -5,15 +5,26 @@
 const MIN_SIZE = 1, MAX_SIZE = 1296 // practical limits, in pts
 const MIN_STEP = 0.1 // the smaller this is, the more precise (and slower) the fit
 
-// Function to check if text is overflowing the frame
-function hasOverflow(textFrame: TextFrame, length: number) {
+/**
+ * Checks if the text in the given text frame overflows the frame.
+ *
+ * @param {TextFrame} textFrame - The text frame to check.
+ * @param {number} length - The length of the text.
+ * @returns {boolean} - True if the text overflows the frame, false otherwise.
+ */
+function hasOverflow(textFrame: TextFrame, length: number): boolean {
     const lastLine = textFrame.lines[textFrame.lines.length - 1]
     if (!lastLine) { return true } // no lines visible (frame is too small)
     const visibleLength = (lastLine.characters[0].characterOffset + lastLine.length - 1)
     return visibleLength < length
 }
 
-// Function to fit text to frame only if it's overflowing
+/**
+ * Adjusts the size of the text in the given text frame to fit the frame if the text is overflowing.
+ * If the text is not overflowing, the size is not changed.
+ *
+ * @param {TextFrame} textFrame - The text frame to adjust the text size in.
+ */
 export function fitTextToFrameIfOverflowing(textFrame: TextFrame) {
     if (textFrame.kind === TextType.POINTTEXT) { return }
     const length = textFrame.contents.replace(/\s+$/, "").length
@@ -41,7 +52,12 @@ export function fitTextToFrameIfOverflowing(textFrame: TextFrame) {
     }
 }
 
-// Function to fit text to frame, even if it's not overflowing at the start
+/**
+ * Adjusts the size of the text in the given text frame to fit the frame.
+ * The size is increased until it overflows, then it is decreased until it fits.
+ *
+ * @param {TextFrame} textFrame - The text frame to adjust the text size in.
+ */
 export function fitTextToFrameAlways(textFrame: TextFrame) {
     if (textFrame.kind === TextType.POINTTEXT) { return }
     const length = textFrame.contents.replace(/\s+$/, "").length

@@ -1,6 +1,20 @@
 import pad from './pad';
 
-export default function currentTimestamp(format: string) {
+/**
+ * Returns the current timestamp in the specified format.
+ * The format string can contain the following placeholders:
+ * - 'YYYY' for the full year
+ * - 'MM' for the month
+ * - 'DD' for the day
+ * - 'hh' for the hours
+ * - 'mm' for the minutes
+ * - 'ss' for the seconds
+ * Each placeholder is replaced with the corresponding value from the current date and time.
+ *
+ * @param {string} format - The format to return the timestamp in.
+ * @returns {string} - The current timestamp in the specified format.
+ */
+export default function currentTimestamp(format: string): string {
     const now = new Date();
     const year = now.getFullYear();
     const month = pad(now.getMonth() + 1);
