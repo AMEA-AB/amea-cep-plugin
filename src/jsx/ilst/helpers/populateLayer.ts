@@ -103,7 +103,7 @@ const handleRasterItems = (rasterItems: RasterItem[], data: Record<string, strin
         if (shouldEdit(rasterItem, data)) {
             var file = new File(data[rasterItem.name]);
             var placedItem = placeItem(rasterItem, file);
-            embedImage(placedItem);
+            embedImage<RasterItem>(placedItem);
         }
     }
 }
