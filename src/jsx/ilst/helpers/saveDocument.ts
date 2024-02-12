@@ -22,9 +22,9 @@ export default function saveDocument(doc: Document, outputFile?: File): File {
         outputFolder.create();
     }
     const outputType = outputFile.name.split(".").pop() as OutputType;
-    var saveOpts: PDFSaveOptions | IllustratorSaveOptions | undefined;
-    var exportOpts: ExportOptionsSVG | undefined;
-    var exportType;
+    let saveOpts: PDFSaveOptions | IllustratorSaveOptions | undefined;
+    let exportOpts: ExportOptionsSVG | undefined;
+    let exportType;
     switch (outputType) {
         case "pdf":
             saveOpts = new PDFSaveOptions();

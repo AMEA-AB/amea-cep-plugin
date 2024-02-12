@@ -9,7 +9,7 @@ export default function clipDocument(doc: Document) {
 
     // Move all groups to the clip group
     const groups = doc.groupItems;
-    for(var i = groups.length - 1; i >= 0; i--) {
+    for(let i = groups.length - 1; i >= 0; i--) {
         if (groups[i] !== clipGroup) {
             groups[i].move(clipGroup, ElementPlacement.PLACEATBEGINNING);
         }

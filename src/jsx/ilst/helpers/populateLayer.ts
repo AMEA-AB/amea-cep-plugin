@@ -49,7 +49,7 @@ function placeItem(item: PageItem, file: File): PlacedItem {
  * @param {Color} color - The color to set.
  */
 function setFillColorOfPathItems(pathItems: PathItem[], color: Color) {
-    for (var i = 0; i < pathItems.length; i++) {
+    for (let i = 0; i < pathItems.length; i++) {
         pathItems[i].fillColor = color;
     }
 }
@@ -64,10 +64,10 @@ function setFillColorOfGroupItem(groupItem: LayerGroupOverlap, color: Color) {
     if (groupItem.pathItems.length > 0) {
         setFillColorOfPathItems(groupItem.pathItems, color);
     }
-    for (var i = 0; i < groupItem.compoundPathItems.length; i++) {
+    for (let i = 0; i < groupItem.compoundPathItems.length; i++) {
         setFillColorOfPathItems(groupItem.compoundPathItems[i].pathItems, color);
     }
-    for (var i = 0; i < groupItem.groupItems.length; i++) {
+    for (let i = 0; i < groupItem.groupItems.length; i++) {
         setFillColorOfGroupItem(groupItem.groupItems[i], color);
     }
 }
@@ -130,8 +130,8 @@ function replaceSVG(groupItem: GroupItem, file: File | string) {
  */
 function handleGroupItems(groupItems: GroupItem[], data: Record<string, string>) {
     const length = groupItems.length;
-    for (var i = 0; i < length; i++) {
-        var groupItem = groupItems[i];
+    for (let i = 0; i < length; i++) {
+        let groupItem = groupItems[i];
         if (!groupItem.locked && !groupItem.hidden) {
             if (data[groupItem.name]) {
                 replaceSVG(groupItem, data[groupItem.name]);
@@ -151,11 +151,11 @@ function handleGroupItems(groupItems: GroupItem[], data: Record<string, string>)
  */
 function handleRasterItems(rasterItems: RasterItem[], data: Record<string, string>) {
     const length = rasterItems.length;
-    for (var i = 0; i < length; i++) {
-        var rasterItem = rasterItems[i];
+    for (let i = 0; i < length; i++) {
+        let rasterItem = rasterItems[i];
         if (shouldEdit(rasterItem, data)) {
-            var file = new File(data[rasterItem.name]);
-            var placedItem = placeItem(rasterItem, file);
+            let file = new File(data[rasterItem.name]);
+            let placedItem = placeItem(rasterItem, file);
             embedImage<RasterItem>(placedItem);
         }
     }
@@ -169,14 +169,14 @@ function handleRasterItems(rasterItems: RasterItem[], data: Record<string, strin
  * @param {Record<string, string>} data - The data to use for handling the text frames.
  */
 function handleTextFrames(textFrames: TextFrame[], data: Record<string, string>) {
-    for (var i = 0; i < textFrames.length; i++) {
-        var textFrame = textFrames[i];
+    for (let i = 0; i < textFrames.length; i++) {
+        let textFrame = textFrames[i];
         if (shouldEdit(textFrame, data)) {
             textFrame.contents = data[textFrame.name];
             if(textFrame.kind === TextType.AREATEXT) {
                 fitTextToFrameIfOverflowing(textFrame);
             }
-            var groupItem = textFrame.createOutline();
+            let groupItem = textFrame.createOutline();
             groupItem.locked = true;
             i--; // Textframe is now a group item
         }

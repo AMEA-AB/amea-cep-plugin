@@ -8,7 +8,7 @@ import { includes } from "../../utils/utils";
  */
 function createFilterForWindows(filetypes: string[]): string {
     let filter = '';
-    for (var i = 0; i < filetypes.length; i++) {
+    for (let i = 0; i < filetypes.length; i++) {
         filter += '*.' + filetypes[i];
         if (i < filetypes.length - 1) {
             filter += ';';
@@ -83,8 +83,8 @@ export function openFileDialogMultiple(title: string, filetypes: string[] = []):
         return [];
     }
     const filesArray = Array.prototype.slice.call(files) as File[]; // Convert FileList to array
-    var filePaths = [];
-    for (var i = 0; i < filesArray.length; i++) {
+    let filePaths = [];
+    for (let i = 0; i < filesArray.length; i++) {
         filePaths.push(filesArray[i].fsName);
     }
     return filePaths;
