@@ -1,7 +1,18 @@
 import { RequestOptions } from 'https';
 import { os, fs, path as _path, https, url as _url } from '../lib/cep/node';
 
+/**
+ * Service for handling file operations.
+ */
 export default new class FileService {
+
+    /**
+     * Downloads a file from a given URL.
+     * @param {string} url - The URL of the file to download.
+     * @param {RequestOptions} [options] - Optional request options.
+     * @param {string} [filename] - Optional filename for the downloaded file.
+     * @returns {Promise<string>} A promise that resolves to the path of the downloaded file.
+     */
     public downloadFile(url: string, options?: RequestOptions, filename?: string): Promise<string> {
         return new Promise((resolve, reject) => {
             const urlObject = _url.parse(url);
@@ -33,6 +44,12 @@ export default new class FileService {
         });
     }
 
+    /**
+     * Downloads multiple files from given URLs.
+     * @param {string[]} urls - The URLs of the files to download.
+     * @param {RequestOptions} [options] - Optional request options.
+     * @returns {Promise<{ [url: string]: string }>} A promise that resolves to a map of URLs to file paths.
+     */
     public async downloadFiles(urls: string[], options?: RequestOptions): Promise<{ [url: string]: string }> {
         const filePaths = await Promise.all(urls.map(url_1 => this.downloadFile(url_1, options)));
         const urlToFilePaths: { [url_3: string]: string; } = {};
@@ -42,6 +59,11 @@ export default new class FileService {
         return urlToFilePaths;
     }
 
+    /**
+     * Moves a file to a specified folder.
+     * @param {string} sourceFile - The path of the file to move.
+     * @param {string} destinationFolder - The destination folder.
+     */
     public moveFileToFolder(sourceFile: string, destinationFolder: string) {
         fs.mkdirSync(destinationFolder, { recursive: true });
         const filename = _path.basename(sourceFile);

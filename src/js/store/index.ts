@@ -3,7 +3,7 @@ import { ref } from "vue";
 import FolderService from "../services/folder-service";
 import { path as _path } from "../lib/cep/node";
 
-interface Settings {
+export interface Settings {
     outputFolder?: string;
 
     githubOwner: string;
