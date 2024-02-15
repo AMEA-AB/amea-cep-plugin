@@ -15,7 +15,7 @@ export default new class FolderService {
 
         switch (process.platform) {
             case 'win32':
-                settingsFolder = _path.join(process.env.APPDATA!, appName);
+                settingsFolder = _path.join(os.homedir(), 'AppData', 'Roaming', appName);
                 break;
             case 'darwin':
                 settingsFolder = _path.join(os.homedir(), 'Library', 'Application Support', appName);
