@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSettingsStore } from '../store';
+import { useSettingsStore } from '../store/settings-store';
 
 import FolderInput from '../components/FolderInput.vue';
 

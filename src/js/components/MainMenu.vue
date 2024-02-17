@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, computed } from 'vue';
 import { useRouter } from 'vue-router'
-import { useSettingsStore } from '../store';
+import { useSettingsStore } from '../store/settings-store';
 import type { RouteRecordRaw } from 'vue-router';
 
 const settingsStore = useSettingsStore();

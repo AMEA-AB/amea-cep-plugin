@@ -1,6 +1,6 @@
 import { path as _path, https } from '../lib/cep/node';
 import FileService from './file-service';
-import { useSettingsStore, Settings } from '../store';
+import { useSettingsStore, Settings } from '../store/settings-store';
 
 export interface GithubFile {
     name: string;
