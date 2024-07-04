@@ -1,6 +1,7 @@
 import closeDocument from "./functions/closeDocument";
 import cropToContent from "./functions/cropToContent";
 import generateFromRowData from "./functions/generateFromRowData";
+import getColorVariables from "./functions/getColorVariables";
 import getEditableItems from "./functions/getEditableItems";
 import { mirrorDocument, mirrorLayer } from "./functions/mirror";
 import openDocument from "./functions/openDocument";
@@ -15,6 +16,7 @@ export {
     closeDocument,
     cropToContent,
     generateFromRowData,
+    getColorVariables,
     getEditableItems,
     mirrorDocument,
     mirrorLayer,

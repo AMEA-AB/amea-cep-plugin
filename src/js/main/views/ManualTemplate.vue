@@ -21,6 +21,7 @@ const outputName = ref<string | undefined>(undefined);
 const outputType = ref<OutputType>('pdf');
 const outputFolder = ref<string | undefined>(undefined);
 const editableItems = ref<Record<string, string>>({});
+const colorVariables = ref<string[]>([]);
 const templateData = ref<Record<string, string>>({});
 const flags = ref<TemplateFlag[]>([]);
 
@@ -40,9 +41,11 @@ onMounted(() => {
     watch(selectedTemplateFile, async (newValue) => {
         templateData.value = {};
         editableItems.value = {};
+        colorVariables.value = [];
         if (newValue) {
             await evalTS('openDocument', newValue);
             editableItems.value = await evalTS('getEditableItems', ['RasterItem', 'GroupItem', "TextFrame"]);
+            colorVariables.value = await evalTS('getColorVariables');
             await evalTS('closeDocument');
         }
     });
@@ -110,6 +113,10 @@ const populateTemplate = async () => {
                 :title="`Select file for ${title}`" :filetypes="type === 'RasterItem' ? ['png', 'jpg'] : ['svg', 'ai']">
             </FileInputSingle>
             <input v-if="type === 'TextFrame'" v-model="templateData[title]" type="text" class="form-control" :id="title">
+        </div>
+        <div v-for="colorName in colorVariables" :key="colorName" class="mb-3">
+            <label :for="colorName">{{ colorName }}</label>
+            <input v-model="templateData[colorName]" type="string" class="form-control" :id="colorName">
         </div>
         <div class="mb-3">
             <button @click="populateTemplate" class="btn btn-primary"

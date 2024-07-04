@@ -2,6 +2,8 @@ import clipDocument from "./clipDocument";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
+import { createColorFromHex } from "./createColorFromHex";
+import { getAmeaSpotColorName, isAmeaSpotColor } from "./ameaSpotColor";
 
 type LayerGroupOverlap = GroupItem | Layer;
 
@@ -108,8 +110,10 @@ function replaceSVG(groupItem: GroupItem, file: File | string) {
         file = new File(file);
     }
     const doc = app.open(file);
-    const fillColor = getFillColorOfGroup(groupItem)!;
-    setFillColorOfGroupItem(doc.layers[0], fillColor);
+    const fillColor = getFillColorOfGroup(groupItem);
+    if (fillColor) {
+        setFillColorOfGroupItem(doc.layers[0], fillColor);
+    }
     clipDocument(doc);
 
     const filename = file.name.split(".").shift();
@@ -175,6 +179,16 @@ function handleTextFrames(textFrames: TextFrame[], data: Record<string, string>)
             textFrame.contents = data[textFrame.name];
             if(textFrame.kind === TextType.AREATEXT) {
                 fitTextToFrameIfOverflowing(textFrame);
+            }
+            let fillColor = textFrame.textRange.characterAttributes.fillColor;
+            if(isAmeaSpotColor(fillColor)) {
+                let colorName = getAmeaSpotColorName(fillColor);
+                let hex = data[colorName];
+                if(!hex) {
+                    throw new Error(`Could not find color '${colorName}'`);
+                }
+                let color = createColorFromHex(hex);
+                textFrame.textRange.characterAttributes.fillColor = color;
             }
             let groupItem = textFrame.createOutline();
             groupItem.locked = true;
