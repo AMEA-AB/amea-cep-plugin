@@ -4,7 +4,7 @@
  *
  * @param {Document} doc - The document to clip.
  */
-export default function clipDocument(doc: Document) {
+export default function clipDocument(doc: Document = app.activeDocument) {
     const clipGroup = doc.groupItems.add();
 
     // Move all groups to the clip group

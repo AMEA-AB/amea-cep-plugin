@@ -1,4 +1,4 @@
-import clipDocument from "./clipDocument";
+import clipDocument from "../functions/clipDocument";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";

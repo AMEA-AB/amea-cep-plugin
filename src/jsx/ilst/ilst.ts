@@ -1,3 +1,4 @@
+import clipDocument from "./functions/clipDocument";
 import closeDocument from "./functions/closeDocument";
 import cropToContent from "./functions/cropToContent";
 import generateFromRowData from "./functions/generateFromRowData";
@@ -13,6 +14,7 @@ import rotateDocument from "./functions/rotateDocument";
 import saveDocument from "./functions/saveDocument";
 
 export {
+    clipDocument,
     closeDocument,
     cropToContent,
     generateFromRowData,
