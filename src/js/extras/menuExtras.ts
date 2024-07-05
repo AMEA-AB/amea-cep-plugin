@@ -7,4 +7,5 @@ export default {
     "Mirror document (vertical)": () => evalTS("mirrorDocument", undefined, false),
     "Mirror document (horizontal)": () => evalTS("mirrorDocument", undefined, true),
     "Clip document": () => evalTS("clipDocument"),
+    "Complete compound path items": () => evalTS("completeDocument"),
 }

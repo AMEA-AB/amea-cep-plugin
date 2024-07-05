@@ -1,6 +1,7 @@
 import clipDocument from "./functions/clipDocument";
 import closeDocument from "./functions/closeDocument";
 import cropToContent from "./functions/cropToContent";
+import completeDocument from "./functions/completeDocument";
 import generateFromRowData from "./functions/generateFromRowData";
 import getColorVariables from "./functions/getColorVariables";
 import getEditableItems from "./functions/getEditableItems";
@@ -17,6 +18,7 @@ export {
     clipDocument,
     closeDocument,
     cropToContent,
+    completeDocument,
     generateFromRowData,
     getColorVariables,
     getEditableItems,
