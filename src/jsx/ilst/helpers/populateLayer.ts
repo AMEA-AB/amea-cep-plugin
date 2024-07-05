@@ -2,8 +2,8 @@ import clipDocument from "../functions/clipDocument";
 import saveDocument from "./saveDocument";
 import embedImage from "./embedImage";
 import { fitTextToFrameIfOverflowing } from "./fitTextToFrame";
-import { createColorFromHex } from "./createColorFromHex";
-import { getAmeaSpotColorName, isAmeaSpotColor } from "./ameaSpotColor";
+import { getAmeaSpotColor, isAmeaSpotColor } from "./ameaSpotColor";
+import completeDocument from "../functions/completeDocument";
 
 type LayerGroupOverlap = GroupItem | Layer;
 
@@ -105,18 +105,22 @@ function getFillColorOfGroup(groupItem: LayerGroupOverlap): Color | null {
  * @param {GroupItem} groupItem - The group item to replace.
  * @param {File | string} file - The SVG file to replace the group item with, or a string representing the path to the file.
  */
-function replaceSVG(groupItem: GroupItem, file: File | string) {
+function replaceSVG(groupItem: GroupItem, file: File | string, data: Record<string, string>) {
     if (typeof file === 'string') {
         file = new File(file);
     }
     const doc = app.open(file);
-    const fillColor = getFillColorOfGroup(groupItem);
+    clipDocument(doc);
+    completeDocument(doc);
+    let fillColor = getFillColorOfGroup(groupItem);
     if (fillColor) {
+        if(isAmeaSpotColor(fillColor)) {
+            fillColor = getAmeaSpotColor(fillColor, data);
+        }
         setFillColorOfGroupItem(doc.layers[0], fillColor);
     }
-    clipDocument(doc);
 
-    const filename = file.name.split(".").shift();
+    const filename = file.name.split(".").shift()!;
     const pdfFile = new File(Folder.temp + '/' + filename + '.pdf');
     saveDocument(doc, pdfFile);
     doc.close();
@@ -138,7 +142,7 @@ function handleGroupItems(groupItems: GroupItem[], data: Record<string, string>)
         let groupItem = groupItems[i];
         if (!groupItem.locked && !groupItem.hidden) {
             if (data[groupItem.name]) {
-                replaceSVG(groupItem, data[groupItem.name]);
+                replaceSVG(groupItem, data[groupItem.name], data);
             } else {
                 handleGroup(groupItem, data);
             }
@@ -182,12 +186,7 @@ function handleTextFrames(textFrames: TextFrame[], data: Record<string, string>)
             }
             let fillColor = textFrame.textRange.characterAttributes.fillColor;
             if(isAmeaSpotColor(fillColor)) {
-                let colorName = getAmeaSpotColorName(fillColor);
-                let hex = data[colorName];
-                if(!hex) {
-                    throw new Error(`Could not find color '${colorName}'`);
-                }
-                let color = createColorFromHex(hex);
+                let color = getAmeaSpotColor(fillColor, data);;
                 textFrame.textRange.characterAttributes.fillColor = color;
             }
             let groupItem = textFrame.createOutline();

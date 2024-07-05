@@ -1,3 +1,4 @@
+import { createColorFromHex } from "./createColorFromHex";
 import { isSpotColor } from "./typeGuards";
 
 /**
@@ -21,7 +22,36 @@ export function isAmeaSpotColor(color: Color): color is SpotColor{
  * 
  * @param {SpotColor} color - The AMEA spot color.
  * @returns {string} The name of the AMEA spot color.
+ * @throws {Error} Throws an error if the color is not an AMEA spot color or if the color name cannot be found in the data.
  */
 export function getAmeaSpotColorName(color: SpotColor): string {
+    if(!isAmeaSpotColor(color)) {
+        throw new Error(`Color is not an AMEA spot color`);
+    }
     return color.spot.name.split('=')[1];
+}
+
+/**
+ * Retrieves the hexadecimal color value for a given AMEA spot color.
+ * 
+ * This function first checks if the provided color is an AMEA spot color. If it is,
+ * it then attempts to find the corresponding hexadecimal color value using the color's
+ * name as a key in the provided data object. If the color name is found, it returns
+ * a color object created from the hexadecimal value. If any step fails, it throws an error.
+ * 
+ * @param {SpotColor} color - The AMEA spot color to retrieve the hex value for.
+ * @param {Record<string, string>} data - An object mapping color names to their hexadecimal values.
+ * @returns A color object created from the hexadecimal value of the AMEA spot color.
+ * @throws {Error} Throws an error if the color is not an AMEA spot color or if the color name cannot be found in the data.
+ */
+export function getAmeaSpotColor(color: SpotColor, data: Record<string, string>) {
+    if(!isAmeaSpotColor(color)) {
+        throw new Error(`Color is not an AMEA spot color`);
+    }
+    let colorName = getAmeaSpotColorName(color);
+    let hex = data[colorName];
+    if(!hex) {
+        throw new Error(`Could not find color '${colorName}'`);
+    }
+    return createColorFromHex(hex);
 }
