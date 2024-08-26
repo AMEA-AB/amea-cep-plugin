@@ -10,7 +10,7 @@ export default new class FolderService {
      * @returns {string} The path of the settings folder.
      */
     public getSettingsFolder(): string {
-        const appName = "AMEA CEP"
+        const appName = "Spoties CEP"
         let settingsFolder;
 
         switch (process.platform) {

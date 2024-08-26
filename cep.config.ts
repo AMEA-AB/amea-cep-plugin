@@ -4,8 +4,8 @@ import { version } from "./package.json";
 
 const config: CEP_Config = {
   version,
-  id: "com.amea.cep",
-  displayName: "Amea AB",
+  id: "com.spoties.cep",
+  displayName: "Spoties",
   symlink: "local",
   port: 3000,
   servePort: 5000,
@@ -28,7 +28,7 @@ const config: CEP_Config = {
     {
       mainPath: "./main/index.html",
       name: "main",
-      panelDisplayName: "AMEA AB",
+      panelDisplayName: "Spoties",
       autoVisible: true,
       width: 400,
       height: 600,
@@ -38,7 +38,7 @@ const config: CEP_Config = {
     {
       mainPath: "./extras/index.html",
       name: "extras",
-      panelDisplayName: "AMEA AB - extras",
+      panelDisplayName: "Spoties - extras",
       autoVisible: true,
       width: 400,
       height: 600,
@@ -48,7 +48,7 @@ const config: CEP_Config = {
     {
       mainPath: "./settings/index.html",
       name: "settings",
-      panelDisplayName: "AMEA AB - settings",
+      panelDisplayName: "Spoties - settings",
       autoVisible: true,
       width: 400,
       height: 600,

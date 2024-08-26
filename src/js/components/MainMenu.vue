@@ -9,7 +9,7 @@ const settingsStore = useSettingsStore();
 const props = defineProps({
   title: {
     type: String,
-    default: 'AMEA AB'
+    default: 'Spoties'
   },
   extraOptions: {
     type: Object as () => Record<string, () => any>,
