@@ -14,6 +14,7 @@ The excel file must contain some specific columns for this to work. User data ma
 | Ouput type  | true     | 'pdf' \| 'ai' \| 'svg' | In which format should the file be saved (pdf, ai, svg) |
 | Jig         | false    | string                 | Which jig to put the output file into                   |
 | Flags       | false    | string[]               | A JSON list of various [flags](#Flags) to apply         |
+| (All other) | false    | string                 | Text och image that should populate the template. If image, it should be an link the the location of the image. |
 
 ## Flags
 Flags are used to apply different functions to the document.
@@ -24,6 +25,18 @@ Flags are used to apply different functions to the document.
 | mirror-vertically        | Mirror the document vertically        |
 | rotate-clockwise         | Rotate the document clockwise         |
 | rotate-counter-clockwise | Rotate the document counter clockwise |
+
+## Templates
+Add all wanted elements to the document. For every element that should not be editable, lock it. 
+For all elements that should be editable, give them a suitable name. Multiple elements can have the same name (if they are based on the same data).
+
+To change the color of an element based on the data, give the element a spot color with the name `AMEA-COLOR={color_name}`. Replace `{color_name}` with the data key that holds the final color. 
+
+## Jigs
+
+A jig can only accept a single size of template.
+For each slot, an rectangle i created and named "slot", they have to be at top level.
+Each slot has to be the exact size as the correponding template.
 
 ## Scripts
 
