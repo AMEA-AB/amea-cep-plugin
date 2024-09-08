@@ -48,13 +48,13 @@ export default new class FileService {
      * Downloads multiple files from given URLs.
      * @param {string[]} urls - The URLs of the files to download.
      * @param {RequestOptions} [options] - Optional request options.
-     * @returns {Promise<{ [url: string]: string }>} A promise that resolves to a map of URLs to file paths.
+     * @returns {Promise<Record<string, string>>} A promise that resolves to a map of URLs to file paths.
      */
-    public async downloadFiles(urls: string[], options?: RequestOptions): Promise<{ [url: string]: string }> {
-        const filePaths = await Promise.all(urls.map(url_1 => this.downloadFile(url_1, options)));
-        const urlToFilePaths: { [url_3: string]: string; } = {};
-        urls.forEach((url_4, index) => {
-            urlToFilePaths[url_4] = filePaths[index];
+    public async downloadFiles(urls: string[], options?: RequestOptions): Promise<Record<string, string>> {
+        const filePaths = await Promise.all(urls.map(url => this.downloadFile(url, options)));
+        const urlToFilePaths: Record<string, string> = {};
+        urls.forEach((url, index) => {
+            urlToFilePaths[url] = filePaths[index];
         });
         return urlToFilePaths;
     }

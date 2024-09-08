@@ -150,9 +150,9 @@ export default new class GithubService {
     /**
      * Downloads multiple files from given URLs.
      * @param {string[]} urls - The URLs of the files to download.
-     * @returns {Promise<{ [url: string]: string }>} A promise that resolves to a map of URLs to file paths.
+     * @returns {Promise<Record<string, string>>} A promise that resolves to a map of URLs to file paths.
      */
-    public downloadFiles(urls: string[]): Promise<{ [url: string]: string; }> {
+    public downloadFiles(urls: string[]): Promise<Record<string, string>> {
         const options = {
             'headers': this.githubHeaders
         };
