@@ -8,6 +8,7 @@ import getEditableItems from "./functions/getEditableItems";
 import { mirrorDocument, mirrorLayer } from "./functions/mirror";
 import openDocument from "./functions/openDocument";
 import { openFileDialogMultiple, openFileDialogSingle } from "./functions/openFileDialog";
+import openFolder from "./functions/openFolder";
 import openFolderDialog from "./functions/openFolderDialog";
 import populateDocument from "./functions/populateDocument";
 import { populateJig, populateJigSmart } from "./functions/populateJig";
@@ -27,6 +28,7 @@ export {
     openDocument,
     openFileDialogMultiple,
     openFileDialogSingle,
+    openFolder,
     openFolderDialog,
     populateDocument,
     populateJig,

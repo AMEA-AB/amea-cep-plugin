@@ -1,4 +1,5 @@
 import { fs, os, path as _path, crypto } from '../lib/cep/node';
+import { evalTS } from '../lib/utils/bolt';
 
 /**
  * Service for handling folder operations.
@@ -54,5 +55,9 @@ export default new class FolderService {
      */
     public deleteFolder(path: string) {
         fs.rmSync(path, { recursive: true, force: true });
+    }
+
+    public openFolder(path: string) {
+        evalTS("openFolder", path);
     }
 }
