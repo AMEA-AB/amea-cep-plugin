@@ -7,6 +7,8 @@ import GithubService from '../../services/github-service';
 import type { RowDataExcel, RowDataExcelRaw } from '../../../shared/types';
 import { evalTS } from '../../lib/utils/bolt';
 
+import { useSettingsStore } from '../../store/settings-store';
+
 const rowData = ref<RowDataExcel[] | undefined>(undefined)
 const loading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -43,10 +45,16 @@ const buttonTitle = computed(() => {
     return `Process ${rows} row${rows > 1 ? 's' : ''}`;
 })
 
-const getTemplateUrl = (templateName: string) => GithubService.getGithubFileUrl(`templates/${templateName}`);
+const getTemplateUrl = (templateName: string) => {
+    const settingsStore = useSettingsStore();
+    if (settingsStore.settings.useGithub) {
+        return GithubService.getGithubFileUrl(`templates/${templateName}`);
+    }
+    return `${settingsStore.settings.templatesFolder}/${templateName}`;
+};
 
 const getFilesForRows = async (rows: RowDataExcel[]) => {
-    const urlRegex = /^https?:\/\/((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
+    const urlRegex = /^https?:\/\/(((a-z\d*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
     const dataUrls: Set<string> = new Set();
     const templateUrls: Set<string> = new Set();
 
@@ -59,8 +67,18 @@ const getFilesForRows = async (rows: RowDataExcel[]) => {
             }
         }
     }
+
     const urlToFilePaths = await FileService.downloadFiles(Array.from(dataUrls));
-    const templateToFilePaths = await GithubService.downloadFiles(Array.from(templateUrls));
+    let templateToFilePaths: Record<string, string> = {};
+
+    const settingsStore = useSettingsStore();
+    if (settingsStore.settings.useGithub) {
+        templateToFilePaths = await GithubService.downloadFiles(Array.from(templateUrls));
+    } else {
+        for (const templateUrl of templateUrls) {
+            templateToFilePaths[templateUrl] = templateUrl;
+        }
+    }
 
     for (const row of rows) {
         for (const column of Object.keys(row)) {
@@ -72,7 +90,7 @@ const getFilesForRows = async (rows: RowDataExcel[]) => {
             }
         }
     }
-}
+};
 
 const processRows = async () => {
     if (!rowData.value) return;
@@ -95,11 +113,15 @@ const processRows = async () => {
                 nonJigFiles.push(...outputs);
             }
         }
-        const outputFolder = FolderService.getDesktopFolder('Bundles');
+        const settingsStore = useSettingsStore();
+        const outputFolder = settingsStore.settings.outputFolder;
         for (const jigName of Object.keys(jigFiles)) {
             const inputs = jigFiles[jigName];
-            const jigFileURL = GithubService.getGithubFileUrl(`jigs/${jigName}`);
-            const jigFile = await GithubService.downloadFile(jigFileURL);
+            let jigFile = `${settingsStore.settings.jigsFolder}/${jigName}`;
+            if (settingsStore.settings.useGithub) {
+                const jigFileURL = GithubService.getGithubFileUrl(`jigs/${jigName}`);
+                jigFile = await GithubService.downloadFile(jigFileURL);
+            } 
             await evalTS('populateJigSmart', jigFile, inputs, outputFolder);
         }
         for(const file of nonJigFiles) {

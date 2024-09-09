@@ -60,4 +60,13 @@ export default new class FolderService {
     public openFolder(path: string) {
         evalTS("openFolder", path);
     }
+
+    public getFilesInFolder(folderPath: string, extension?: string[]): string[] {
+        const files = fs.readdirSync(folderPath);
+        return files.filter((filename) => (!extension || extension.some((extension) => filename.endsWith(`.${extension}`))));
+    }
+
+    public getFileNamesInFolder(folderPath: string, extension?: string[]): string[] {
+        return this.getFilesInFolder(folderPath, extension).map(file => _path.basename(file));
+    }
 }

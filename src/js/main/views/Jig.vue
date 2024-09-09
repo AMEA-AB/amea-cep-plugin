@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import GithubService, { GithubFile } from '../../services/github-service';
+import GithubService from '../../services/github-service';
 import FolderService from '../../services/folder-service';
 import FileInputSingle from '../../components/FileInputSingle.vue';
 import FileInputMultiple from '../../components/FileInputMultiple.vue';
 import { evalTS } from '../../lib/utils/bolt';
+import { useSettingsStore } from '../../store/settings-store';
 
 const props = defineProps({
     showJigSelect: {
@@ -13,8 +14,8 @@ const props = defineProps({
     },
 });
 
-const jigs = ref<GithubFile[]>([]);
-const selectedJig = ref<GithubFile | undefined>(undefined);
+const jigs = ref<string[]>([]);
+const selectedJig = ref<string | undefined>(undefined);
 const selectedJigFile = ref<string | undefined>(undefined);
 const selectedFiles = ref<string[]>([]);
 
@@ -35,16 +36,26 @@ watch(props, (newProps, oldProps) => {
 });
 
 const populateJigSelect = async () => {
-    jigs.value = (await GithubService.getFileNamesInFolder('jigs'));
+    const settingsStore = useSettingsStore();
+    if (settingsStore.settings.useGithub) {
+        jigs.value = (await GithubService.getFilenamesInFolder('jigs'), ['pdf', 'ai']);
+    } else {
+        jigs.value = FolderService.getFilesInFolder(settingsStore.settings.jigsFolder, ['pdf', 'ai']);
+    }
 }
 
 const populateJig = async () => {
     let jigPath = selectedJigFile.value;
     if (selectedJig.value) {
-        jigPath = await GithubService.downloadGithubFile(selectedJig.value);
+        const settingsStore = useSettingsStore();
+        jigPath = `${settingsStore.settings.jigsFolder}/${selectedJig.value}`;
+        if (settingsStore.settings.useGithub) {
+            jigPath = await GithubService.downloadFile(GithubService.getGithubFileUrl(`jigs/${selectedJig.value}`));
+        }
     }
     if (jigPath && selectedFiles.value.length > 0) {
-        const outputFolder = FolderService.getDesktopFolder('Bundles');
+        const settingsStore = useSettingsStore();
+        const outputFolder = settingsStore.settings.outputFolder;
         await evalTS('populateJig', jigPath, selectedFiles.value, outputFolder);
         selectedFiles.value = [];
     }
@@ -59,7 +70,7 @@ const populateJig = async () => {
             </div>
             <select v-model="selectedJig" class="form-select" id="jigSelect">
                 <option disabled value="">Choose...</option>
-                <option v-for="file in jigs" :key="file.name" :value="file">{{ file.name }}</option>
+                <option v-for="filename in jigs" :key="filename" :value="filename">{{ filename }}</option>
             </select>
         </div>
         <div v-else class="mb-3">

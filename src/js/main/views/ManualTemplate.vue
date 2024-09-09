@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import GithubService, { GithubFile } from '../../services/github-service';
+import { useSettingsStore } from '../../store/settings-store';
+import GithubService from '../../services/github-service';
+import FolderService from '../../services/folder-service';
 import FileInputSingle from '../../components/FileInputSingle.vue';
 import FolderInput from '../../components/FolderInput.vue';
 import { evalTS } from '../../lib/utils/bolt';
@@ -14,8 +16,8 @@ defineProps({
     },
 });
 
-const templates = ref<GithubFile[]>([]);
-const selectedTemplate = ref<GithubFile | undefined>(undefined);
+const templates = ref<string[]>([]);
+const selectedTemplate = ref<string | undefined>(undefined);
 const selectedTemplateFile = ref<string | undefined>(undefined);
 const outputName = ref<string | undefined>(undefined);
 const outputType = ref<OutputType>('pdf');
@@ -26,13 +28,24 @@ const templateData = ref<Record<string, string>>({});
 const flags = ref<TemplateFlag[]>([]);
 
 onMounted(() => {
-    GithubService.getFileNamesInFolder('templates').then((files) => {
-        templates.value = files;
-    });
+    const settingsStore = useSettingsStore();
+
+    if (settingsStore.settings.useGithub) {
+        GithubService.getFilenamesInFolder('templates', ['pdf', 'ai']).then((files) => {
+            templates.value = files;
+        });
+    } else {
+        templates.value = FolderService.getFilesInFolder(settingsStore.settings.templatesFolder, ['pdf', 'ai']);
+    }
 
     watch(selectedTemplate, async (newValue) => {
         if (newValue) {
-            selectedTemplateFile.value = await GithubService.downloadGithubFile(newValue);
+            const settingsStore = useSettingsStore();
+            if (settingsStore.settings.useGithub) {
+                selectedTemplateFile.value = await GithubService.downloadFile(GithubService.getGithubFileUrl(`templates/${newValue}`));
+            } else {
+                selectedTemplateFile.value = `${settingsStore.settings.templatesFolder}/${newValue}`;
+            }
             return;
         }
         selectedTemplateFile.value = undefined;
@@ -77,7 +90,7 @@ const populateTemplate = async () => {
             <label for="templateSelect">Template</label>
             <select v-model="selectedTemplate" class="form-select" id="templateSelect">
                 <option disabled value="">Choose...</option>
-                <option v-for="files in templates" :key="files.name" :value="files">{{ files.name }}</option>
+                <option v-for="template in templates" :key="template" :value="template">{{ template }}</option>
             </select>
         </div>
         <div v-else class="mb-3">

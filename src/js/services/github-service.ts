@@ -89,9 +89,9 @@ export default new class GithubService {
      * Gets the names of files in a folder on Github.
      * @param {string} path - The path of the folder.
      * @param {string[]} [extension] - Optional array of file extensions to filter by.
-     * @returns {Promise<GithubFile[]>} A promise that resolves to an array of GithubFile objects.
+     * @returns {Promise<string[]>} A promise that resolves to an array of filenames.
      */
-    public getFileNamesInFolder(path: string, extension?: string[]): Promise<GithubFile[]> {
+    public getFilenamesInFolder(path: string, extension?: string[]): Promise<string[]> {
         return new Promise((resolve, reject) => {
             const urlPath = `/repos/${this.githubOwner}/${this.githubRepo}/contents/${path}?ref=${this.githubBranch}`;
 
@@ -112,8 +112,8 @@ export default new class GithubService {
                 res.on('end', () => {
                     const response = JSON.parse(data) as GithubFile[];
                     const files = response
-                        .filter((content: any) => content.type === 'file' && (!extension || content.name.endsWith(`.${extension}`)));
-                    resolve(files);
+                        .filter((file: GithubFile) => file.type === 'file' && (!extension || extension.some((extension) => file.name.endsWith(`.${extension}`))));
+                    resolve(files.map(file => file.name));
                 });
             });
 

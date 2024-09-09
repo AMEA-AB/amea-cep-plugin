@@ -13,8 +13,28 @@ const settingsStore = useSettingsStore();
       <FolderInput id="outputFolder" v-model="settingsStore.settings.outputFolder" title="Select output folder">
       </FolderInput>
     </div>
+
+    <div class="mb-3">
+      <label for="templatesFolder">Templates folder</label>
+      <FolderInput id="templatesFolder" v-model="settingsStore.settings.templatesFolder" title="Select templates folder">
+      </FolderInput>
+    </div>
+
+    <div class="mb-3">
+      <label for="jigsFolder">Jigs folder</label>
+      <FolderInput id="jigsFolder" v-model="settingsStore.settings.jigsFolder" title="Select jigs folder">
+      </FolderInput>
+    </div>
+
     <fieldset class="border p-3">
       <legend>GitHub</legend>
+      <div class="form-check mb-3">
+        <label class="form-check-label" for="useGithub">
+          Use GitHub
+        </label>
+        <input v-model="settingsStore.settings.useGithub" class="form-check-input" type="checkbox" value=""
+          id="useGithub">
+      </div>
       <div class="row mb-3">
         <div class="col">
           <label for="githubOwner" class="form-label">Owner</label>
