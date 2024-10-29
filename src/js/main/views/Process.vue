@@ -54,7 +54,7 @@ const getTemplateUrl = (templateName: string) => {
 };
 
 const getFilesForRows = async (rows: RowDataExcel[]) => {
-    const urlRegex = /^https?:\/\/(((a-z\d*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
+    const urlRegex = /^https?:\/\/([a-z\d.-]+)\.([a-z]{2,})(:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$/i;
     const dataUrls: Set<string> = new Set();
     const templateUrls: Set<string> = new Set();
 
