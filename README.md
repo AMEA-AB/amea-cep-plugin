@@ -38,7 +38,11 @@ A jig can only accept a single size of template.
 For each slot, an rectangle i created and named "slot", they have to be at top level.
 Each slot has to be the exact size as the correponding template.
 
-## Scripts
+## Tips
+
+### Debugging Unsigned Extensions
+
+[https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#debugging-unsigned-extensions](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_11.x/Documentation/CEP%2011.1%20HTML%20Extension%20Cookbook.md#debugging-unsigned-extensions)
 
 ### Clear CEP cache. 
 ```bash
