@@ -1,6 +1,6 @@
 {
-  "name": "bolt-cep",
-  "version": "0.0.1",
+  "name": "amea-cep-plugin",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "watch": "tsc && vite build --watch true",
