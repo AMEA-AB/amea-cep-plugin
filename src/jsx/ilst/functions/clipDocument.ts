@@ -7,13 +7,20 @@
 export default function clipDocument(doc: Document = app.activeDocument) {
     const clipGroup = doc.groupItems.add();
 
-    // Move all groups to the clip group
-    const groups = doc.groupItems;
-    for(let i = groups.length - 1; i >= 0; i--) {
-        if (groups[i] !== clipGroup) {
-            groups[i].move(clipGroup, ElementPlacement.PLACEATBEGINNING);
+    // Collect all items to move
+    const itemsToMove: PageItem[] = [];
+    for (let i = 0; i < doc.pageItems.length; i++) {
+        const item = doc.pageItems[i];
+        if (item !== clipGroup && (item.parent as PageItem).typename === "Layer") {
+            itemsToMove.push(item);
         }
     }
+
+    // Move collected items to the clip group
+    for (let i = 0; i < itemsToMove.length; i++) {
+        itemsToMove[i].move(clipGroup, ElementPlacement.PLACEATBEGINNING);
+    }
+
     // Create a clipping mask
     const artboard = doc.artboards[doc.artboards.getActiveArtboardIndex()];
     const artboardRect = artboard.artboardRect; // [left, top, right, bottom]
