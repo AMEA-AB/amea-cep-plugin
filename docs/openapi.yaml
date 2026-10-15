@@ -1,0 +1,240 @@
+openapi: 3.1.0
+info:
+  title: AMEA Headless VectorCraft API
+  version: 1.0.0
+  description: >-
+    Submit JSON row arrays and their referenced design files for headless
+    processing through VectorCraft. Jobs are processed one at a time.
+servers:
+  - url: http://localhost:8787
+    description: Local default; configure API_PORT or the deployed host as needed.
+tags:
+  - name: Jobs
+  - name: Health
+security:
+  - BearerAuth: []
+  - {}
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Check whether the API is running
+      security: []
+      responses:
+        '200':
+          description: API process is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    const: ok
+  /jobs:
+    post:
+      tags: [Jobs]
+      summary: Submit a JSON processing job
+      description: >-
+        Provide a `data` multipart field containing a non-empty JSON array of
+        row objects, then upload every template, jig, and asset referenced by
+        the rows. File parts may use any field name; filenames are matched
+        case-insensitively. Excel workbook, `.ai`, and `.ait` uploads are
+        rejected; templates and jigs must be SVG or PDF. The response is
+        returned once the job is queued; processing can finish before the
+        client polls the job.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: string
+                  description: JSON-serialized non-empty array of row objects.
+                  example: '[{"Name":"Poster","Quantity":1,"Template":"template.svg","Output type":"pdf"}]'
+              additionalProperties:
+                type: string
+                format: binary
+              description: >-
+                Include the `data` field and referenced `.svg`, `.pdf`, and raster
+                files. Excel workbooks are not accepted. Upload field names do not
+                matter; filenames do.
+      responses:
+        '202':
+          description: Job accepted and queued for processing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /jobs/{jobId}:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      tags: [Jobs]
+      summary: Get job status and output links
+      responses:
+        '200':
+          description: Current or final job state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /jobs/{jobId}/outputs:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      tags: [Jobs]
+      summary: Get job status and output links
+      description: Alias for `GET /jobs/{jobId}`; this does not download files.
+      responses:
+        '200':
+          description: Current or final job state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /jobs/{jobId}/outputs/{filename}:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+      - name: filename
+        in: path
+        required: true
+        description: Exact output filename returned by the job status response.
+        schema:
+          type: string
+    get:
+      tags: [Jobs]
+      summary: Download a completed output file
+      responses:
+        '200':
+          description: Generated PDF or SVG file.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Required when API_TOKEN is configured; Compose requires it.
+  parameters:
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Job:
+      type: object
+      required: [id, status, createdAt, progress, outputs]
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, complete, failed]
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: [string, 'null']
+          format: date-time
+        finishedAt:
+          type: [string, 'null']
+          format: date-time
+        progress:
+          type: object
+          required: [completed, total]
+          properties:
+            completed:
+              type: integer
+              minimum: 0
+            total:
+              type: integer
+              minimum: 0
+        error:
+          type: [string, 'null']
+        outputs:
+          type: array
+          items:
+            type: object
+            required: [name, url]
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+                description: Relative download URL for this output.
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+  responses:
+    BadRequest:
+      description: Invalid multipart upload, duplicate filename, or unsupported input.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PayloadTooLarge:
+      description: Upload exceeds API_MAX_UPLOAD_BYTES (100 MiB by default).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid bearer token when authentication is enabled.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Job or output does not exist, or the output is not available yet.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Unexpected request or storage error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

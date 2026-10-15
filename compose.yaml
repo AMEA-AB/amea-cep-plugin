@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        VECTORCRAFT_VERSION: ${VECTORCRAFT_VERSION:-0.10.0}
+    ports:
+      - "${API_PORT:-8787}:8787"
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8787
+      API_DATA_DIR: /data
+      API_TOKEN: ${API_TOKEN:?Set API_TOKEN in your environment or .env file}
+      API_MAX_UPLOAD_BYTES: ${API_MAX_UPLOAD_BYTES:-104857600}
+    volumes:
+      - api-data:/data
+    restart: unless-stopped
+    init: true
+
+volumes:
+  api-data:
